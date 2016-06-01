@@ -1,0 +1,24 @@
+{
+    "name": "mirror",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "browser_action": {
+        "default_title": "Mirror tabs!",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+          "tabs"
+        ],
+    "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+	},
+    "content_scripts": [
+        {
+            "matches": ["http://*/*", "https://*/*"],
+            "js": ["content.js"],
+            "run_at": "document_end",
+            "all_frames": true
+        }
+    ]    
+}
