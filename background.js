@@ -1,7 +1,6 @@
 
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	chrome.tabs.getSelected(null,function(currentTab){
-    	//console.log("sent from tab.id=", sender.tab.id);
     	if(currentTab.id == sender.tab.id){
     		console.info("passthrough " + request.event + " on path:\n " + request.element);
     		sendEventToUkTab(request);
@@ -24,9 +23,9 @@ function sendEventToUkTab(msg) {
 	            var tab = tabs[k];
 	            if(tab.id != currentTab.id){
 	            	chrome.tabs.sendMessage(tab.id, msg,function(response){
-	            		console.info("response from foreign content-script:" + response);
+	            		console.info("response: " + response);
 	            	});
-	            	//console.log("sent message to tab:" + tab.id);
+	            	//console.log("sent from tab " + currentTab.id  +" to tab ", tab.id);
 	            }
 	            else{
 	            	//console.info("dont send to yourself!!!");
