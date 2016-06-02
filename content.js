@@ -1,6 +1,5 @@
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-
 	if(request.element!=""){
 		var el = document.querySelector(request.element);
 	    if(el !== null){
@@ -9,7 +8,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	    	switch(request.event){
 	    		case 'focus':
 	    			el.focus();
-	    			el.select();
+	    			if(typeof el.select !== "undefined"){
+	    				el.select();
+	    			}
 	    		break;
 	    		case 'change':
 	    			el.value=request.value;
@@ -19,9 +20,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	    		break; 		
 	    	}
 	    	
-	    	sendResponse(request.event + " on " + el.tagName + "path:\n" + request.element);
+	    	sendResponse(request.event + " on " + el.tagName + " path:\n" + request.element);
 	    }else {
-	    	sendResponse("DID NOT FIND ELEMENT");
+	    	// often occurs, since content script is duplicated into multiple contexts, not only the webpage itself
 	    }
 	}else{
     	switch(request.event){
@@ -35,25 +36,33 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 document.addEventListener('click', function (e) {
+	if(e.detail==0){
+		return;
+	}
+	console.info("captured click event");
 	chrome.extension.sendMessage({
 		element: getDomPath(e.srcElement),
 		event: 'click'
 	});	
 },true);
 document.addEventListener('focus', function (e) {
+	console.info("captured focus event");
 	chrome.extension.sendMessage({
 		element: getDomPath(e.srcElement),
 		event: 'focus',
 	});	
 },true);
 document.addEventListener('changed', function (e) {
+	console.info("captured changed event");
 	chrome.extension.sendMessage({
 		element: getDomPath(e.srcElement),
 		event: 'change',
 		value: e.srcElement.value
 	});	
 },true);
+
 window.addEventListener('scroll', function (e) {
+	console.info("captured scroll event");
 	chrome.extension.sendMessage({
 		element:'',
 		event: 'scroll',
