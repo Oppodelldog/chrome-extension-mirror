@@ -1,48 +1,55 @@
 function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse) {
 	if(request.elementPath!=""){
-		var element = document.querySelector(request.elementPath);
-	    if(element !== null){
-			var mouseEventInfo = request.mouseEventInfo;
-	    	switch(request.event){
-	    		case 'focus':
-	    			element.focus();
-	    			if(typeof element.select !== "undefined"){
-	    				element.select();
-	    			}
-	    		break;
-
-	    		case 'change':
-	    			element.value=request.value;
-	    		break; 		
-
-	    		case 'click':
-	    			dispatchMouseEvent('click',element,mouseEventInfo);
-	    		break; 		
-	    		case 'mousemove':
-	    			dispatchMouseEvent('mousemove',element,mouseEventInfo);
-	    		break; 	
-	    		case 'mousedown':
-					dispatchMouseEvent('mousedown',element,mouseEventInfo);    		
-	    		break; 	
-	    		case 'mouseup':
-					dispatchMouseEvent('mouseup',element,mouseEventInfo);
-	    		break; 	
-	    	}
-	    	
-	    	sendResponse(request.event + " on " + element.tagName + " path:\n" + request.elementPath);
-	    }else {
-	    	// often occurs, since content script is duplicated into multiple contexts, not only the webpage itself
-	    }
+		var element = DomUtil.findElementByPath(request.elementPath);
+		if(element === null){
+			// element not found by path
+		    // might be an issue while ressembling the elements path, but also occurs
+		    // since the content scripts are injected all iframes like		
+		    return;
+		}		
+		dispatchDomElementEvent(request,element);
 	}else{
-    	switch(request.event){
-    		case 'scroll':
-    			window.scroll(request.scrollX,request.scrollY);
-    		break;    		
-    	}
-    	sendResponse("NON ELEMENT EVENT TRIGGERED " + request.event);    	
+    	dispatchNonDomElementEvent(request,sendResponse);  	
     }
 }
 chrome.runtime.onMessage.addListener(receiveEventBroadcastFromBackgroundScript);
+
+function dispatchNonDomElementEvent(request, sendResponse){
+	switch(request.event){
+		case 'scroll':
+			window.scroll(request.scrollX,request.scrollY);
+		break;    		
+	}
+	//sendResponse("NON ELEMENT EVENT TRIGGERED " + request.event);  	
+}
+
+function dispatchDomElementEvent(request, element, sendResponse){
+	switch(request.event){
+		case 'focus':
+			element.focus();
+			if(typeof element.select !== "undefined"){
+				element.select();
+			}
+		break;
+
+		case 'change':
+			element.value=request.value;
+		break; 		
+
+		case 'click':
+			dispatchMouseEvent('click',element,request.mouseEventInfo);
+		break; 		
+		case 'mousemove':
+			dispatchMouseEvent('mousemove',element,request.mouseEventInfo);
+		break; 	
+		case 'mousedown':
+			dispatchMouseEvent('mousedown',element,request.mouseEventInfo);    		
+		break; 	
+		case 'mouseup':
+			dispatchMouseEvent('mouseup',element,request.mouseEventInfo);
+		break; 	
+	}
+}
 
 function dispatchMouseEvent(eventName,element,mouseEventInfo){
 	ev = new MouseEvent(eventName,{
@@ -55,5 +62,3 @@ function dispatchMouseEvent(eventName,element,mouseEventInfo){
 	  });
 	element.dispatchEvent(ev);
 }
-
-

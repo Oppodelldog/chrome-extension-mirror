@@ -29,5 +29,8 @@ var DomUtil = {
     }
 
     return stack.slice(1).join(" "); // removes the html element and build a reusable querySelector string
+  },
+  findElementByPath: function(elementPath){
+    return document.querySelector(request.elementPath);
   }
-}
+};
