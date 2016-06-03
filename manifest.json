@@ -10,7 +10,7 @@
           "tabs"
         ],
     "background": {
-    "scripts": ["background.js"],
+    "scripts": ["background.js","coupling.js"],
     "persistent": false
 	},
     "content_scripts": [

@@ -1,4 +1,3 @@
-
 function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
 	chrome.tabs.getSelected(null,function(currentTab){
     	if(currentTab.id == sender.tab.id){
@@ -15,6 +14,7 @@ chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 function broadcastEventToCoupledTabsContentScripts(msg) {
 
 	chrome.tabs.getSelected(null,function(currentTab){
+		var coupledTabs = findCoupleForTab(currentTab.id, currentTab.url);
 	//console.log(currentTab);
 	    chrome.tabs.query({
 	        url: currentTab.url.split('#')[0]
@@ -22,9 +22,11 @@ function broadcastEventToCoupledTabsContentScripts(msg) {
 	        for(k in tabs){
 	            var tab = tabs[k];
 	            if(tab.id != currentTab.id){
-	            	chrome.tabs.sendMessage(tab.id, msg,function(response){
-	            		//console.info("response: " + response);
-	            	});
+	            	if(isTabsIdInArray(tab.id,coupledTabs)){
+	            		chrome.tabs.sendMessage(tab.id, msg,function(response){
+		            		//console.info("response: " + response);
+		            	});
+	            	}
 	            	//console.log("sent from tab " + currentTab.id  +" to tab ", tab.id);
 	            }
 	            else{
@@ -34,4 +36,3 @@ function broadcastEventToCoupledTabsContentScripts(msg) {
 	    });
 	});
 };
-
