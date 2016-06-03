@@ -2,7 +2,7 @@
 function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
 	chrome.tabs.getSelected(null,function(currentTab){
     	if(currentTab.id == sender.tab.id){
-    		//console.info("passthrough " + request.event + " on path:\n " + request.element);
+    		//console.info("passthrough " + request.event + " on path:\n " + request.elementPath);
     		broadcastEventToCoupledTabsContentScripts(request);
     	}
     	else{

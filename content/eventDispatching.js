@@ -4,7 +4,7 @@ function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse
 		if(element === null){
 			// element not found by path
 		    // might be an issue while ressembling the elements path, but also occurs
-		    // since the content scripts are injected all iframes like		
+		    // since the content scripts are injected all iframes like	
 		    return;
 		}		
 		dispatchDomElementEvent(request,element);
@@ -58,7 +58,8 @@ function dispatchMouseEvent(eventName,element,mouseEventInfo){
     	clientX:mouseEventInfo.clientX,
 		clientY:mouseEventInfo.clientY,
 		screenX:mouseEventInfo.screenX,
-		screenY:mouseEventInfo.screenY
+		screenY:mouseEventInfo.screenY,
+		inputDeviceCapabilities: new InputDeviceCapabilities()
 	  });
 	element.dispatchEvent(ev);
 }
