@@ -1,18 +1,18 @@
 
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
 	chrome.tabs.getSelected(null,function(currentTab){
     	if(currentTab.id == sender.tab.id){
-    		console.info("passthrough " + request.event + " on path:\n " + request.element);
-    		sendEventToUkTab(request);
+    		//console.info("passthrough " + request.event + " on path:\n " + request.element);
+    		broadcastEventToCoupledTabsContentScripts(request);
     	}
     	else{
     		//console.info("don't route from self events");
     	}
 	})
-});
+}
+chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 
-
-function sendEventToUkTab(msg) {
+function broadcastEventToCoupledTabsContentScripts(msg) {
 
 	chrome.tabs.getSelected(null,function(currentTab){
 	//console.log(currentTab);
@@ -23,7 +23,7 @@ function sendEventToUkTab(msg) {
 	            var tab = tabs[k];
 	            if(tab.id != currentTab.id){
 	            	chrome.tabs.sendMessage(tab.id, msg,function(response){
-	            		console.info("response: " + response);
+	            		//console.info("response: " + response);
 	            	});
 	            	//console.log("sent from tab " + currentTab.id  +" to tab ", tab.id);
 	            }
