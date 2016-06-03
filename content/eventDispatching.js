@@ -34,6 +34,7 @@ function dispatchDomElementEvent(request, element, sendResponse){
 
 		case 'change':
 			element.value=request.value;
+			dispatchEvent('change',element);
 		break; 		
 
 		case 'click':
@@ -49,6 +50,11 @@ function dispatchDomElementEvent(request, element, sendResponse){
 			dispatchMouseEvent('mouseup',element,request.mouseEventInfo);
 		break; 	
 	}
+}
+
+function dispatchEvent(eventName,element){
+	ev = new Event(eventName);
+	element.dispatchEvent(ev);
 }
 
 function dispatchMouseEvent(eventName,element,mouseEventInfo){
