@@ -1,0 +1,11 @@
+<div class="overview">
+    <h1>{{ctrl.title}}</h1>
+    <h2>Overview</h2>
+    <b>This tab is currently mirrored to the following tabs:</b>
+    <ul>
+    <li ng-repeat="(key,value) in vm.mirroredTabs">
+      {{value.title}}<br/>
+      {{value.url}}
+    </li>
+    </ul>
+</div>

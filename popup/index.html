@@ -1,20 +1,13 @@
 <html>
 <head>
 <script src="angular.min.js"></script>
+<script src="angular-route.min.js"></script>
 <script src="app.js"></script>
 <script src="overviewController.js"></script>
+<script src="router.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css"></link>
 </head>
-<body ng-app="app" ng-controller="OverviewController as ctrl">
-    <div class="container">
-        <h1>{{ctrl.title}}</h1>
-        <h2>Overview</h2>
-        <b>This tab is currently mirrored to the following tabs:</b>
-        <ul>
-        <li ng-repeat="(key,value) in ctrl.mirroredTabs">
-          {{value.title}}<br/>
-          {{value.url}}
-        </li>
-        </ul>
-    </div>
+<body ng-app="app">
+    <div ng-view></div>
 </body>
 </html>
