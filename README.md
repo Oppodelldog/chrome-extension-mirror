@@ -27,8 +27,8 @@ In the folder content you will find some scripts where two are important:
  * eventCapturing.js (step 1 above)
  * eventDispatching.js (step 3 above)
 
-In the root folder you will find antoher important script:
-* background.js (step 2 above)
+In the background folder you will find antoher important script:
+* eventBroadcasting.js (step 2 above)
 
 ### Functionality
 Basic functionality explained by example:
@@ -38,7 +38,6 @@ Assume the user clicks on a button.
  1. **eventCapturing.js**: the event is captured by the 'click-listener' and is then send to the background-script
  2. **backgroundscript.js**: receives the event-information looks for target tabs and then broadcasts the event to the content-script eventDispatching.js
  3. **eventDispatching.js**: when the event is received the script tries to find the element by path and the dispatches the event on that element
-
 
 ## Tutorials 
 very good kick-off tutorial about **developing chrome extensions**:
