@@ -14,13 +14,11 @@ chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 function broadcastEventToCoupledTabsContentScripts(msg) {
 
 	chrome.tabs.getSelected(null,function(currentTab){
-		var coupledTabs = findCoupleForTab(currentTab);
+		var coupledTabs = findCouplesForTab(currentTab);
 	//console.log(currentTab);
-	    chrome.tabs.query({
-	        url: currentTab.url.split('#')[0]
-	    }, function(tabs) {
-	        for(k in tabs){
-	            var tab = tabs[k];
+	    chrome.tabs.query({}, function(allTabs) {
+	        for(k in allTabs){
+	            var tab = allTabs[k];
 	            if(tab.id != currentTab.id){
 	            	if(isTabsIdInArray(tab.id,coupledTabs)){
 	            		chrome.tabs.sendMessage(tab.id, msg,function(response){
