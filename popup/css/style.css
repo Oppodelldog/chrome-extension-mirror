@@ -1,3 +1,28 @@
-.overview{
+.overview,.configuration{
 	width:600px;
+}
+
+li + ul{
+	margin-top:20px;
+}
+li{
+	margin-top:20px;
+}
+
+ul li ul li{
+	margin-top:10px;	
+}
+
+.pass,.fail{
+	font-size:160%;
+	width:16px;
+	height:16px;
+}
+.pass:before{
+	content:  "\2714";
+	color:green;
+}
+.fail:before{
+	content: "\26A0";
+	color:red;
 }

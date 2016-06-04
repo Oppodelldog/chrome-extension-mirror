@@ -1,0 +1,20 @@
+<div class="configuration">
+    <h1>{{vm.title}}</h1>
+    Test Url: <input ng-model="vm.testUrl" type="text"/>
+    <ul>
+    <li>Add Mirror Group<button ng-click="vm.prependConfigurationEntry()">+</button></li>
+    <li ng-repeat="(ck,configurationEntry) in vm.configuration">
+    <input type="text" ng-model="configurationEntry.groupName"/>
+    <button ng-click="vm.removeConfigurationEntry(ck)">-</button>
+    <ul>
+    <li>Add Regular Expression<button ng-click="vm.prependRegExEntryToList(configurationEntry.regExList)">+</button></li>
+    <li ng-repeat="(key,value) in configurationEntry.regExList track by $index" >
+      <input type="text" ng-model="value"/>
+      <button ng-click="vm.removeRegExEntryFromList(configurationEntry.regExList,key)">-</button>
+      <span ng-if="vm.testUrl!=''" ng-class="vm.testUrlAgainstRegEx(value) ? 'pass' : 'fail'"></span>
+     </li>
+     </ul>
+      
+    </li>
+    </ul>
+</div>

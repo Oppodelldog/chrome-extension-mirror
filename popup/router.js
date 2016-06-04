@@ -7,7 +7,12 @@ angular.module('app').config(['$routeProvider',
         controller: 'OverviewController',
         controllerAs: 'vm',
       }).
+      when('/configuration', {
+        templateUrl: 'templates/configuration.html',
+        controller: 'ConfigurationController',
+        controllerAs: 'vm',
+      }).      
       otherwise({
-        redirectTo: '/overview'
+        redirectTo: '/configuration'
       });
   }]);

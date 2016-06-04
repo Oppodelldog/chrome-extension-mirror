@@ -1,6 +1,6 @@
 angular.module('app').controller("OverviewController", function($scope){
     var vm = this;
-    vm.title = 'Mirror 	Extension';
+    vm.title = 'Overview';
 
     loadMirroredTabs(function(mirroredTabs){
     	vm.mirroredTabs = mirroredTabs;
