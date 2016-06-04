@@ -1,3 +1,14 @@
+ul.navigation{
+	font-size: 140%;
+	display:table-row;
+}
+ul.navigation li{
+	display:table-cell;
+}
+ul.navigation li+li{
+	padding-left:20px;
+}
+
 .overview,.configuration{
 	width:600px;
 }
