@@ -10,7 +10,7 @@
           "tabs"
         ],
     "background": {
-    "scripts": ["background/eventBroadcasting.js","background/tabCoupling.js"],
+    "scripts": ["background/eventBroadcasting.js","background/tabCoupling.js","background/configuration.js"],
     "persistent": false
 	},
     "content_scripts": [

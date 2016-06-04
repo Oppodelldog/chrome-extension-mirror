@@ -10,15 +10,17 @@
 	the config currently is hard coded and should be moved into localStorage managed by popup.js
 */
 var tabCouples = [];
-
+/*
 localStorage["coupling"] = JSON.stringify([
 	{
-		regExList :[ ".*mongos.*" ]
+		groupName :"Mongo",
+		regExList :[ {regEx:".*mongos.*"} ]
 	},
 	{
-		regExList :[ ".*google\\.de.*" ,".*google\\.fr.*", ".*google\\.ch.*"]
+		groupName:"Google",
+		regExList :[ {regEx:".*google\\.de.*"} ,{regEx:".*google\\.fr.*"}, {regEx:".*google\\.ch.*"}]
 	}	
-]);
+]);*/
 
 function findCouplesForTab(tab){
 	
@@ -35,7 +37,7 @@ function findCouplesForTab(tab){
 	}
 
 	blockTabFromDetection(tab);
-	var config = JSON.parse(localStorage["coupling"]);
+	var config = JSON.parse(loadConfiguration());
 	for(k in config){
 		configEntry = config[k];
 

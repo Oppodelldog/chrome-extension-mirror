@@ -1,10 +1,10 @@
-angular.module('app').controller("ConfigurationController", function($scope){
+var controller = angular.module('app').controller("ConfigurationController", function($scope){
     var vm = this;
     vm.testUrl="";
     vm.title = 'Configuration';
 
     this.prependRegExEntryToList = function(list){
-    	list.unshift("HALLO");
+    	list.unshift({regEx:""});
     }
     this.removeRegExEntryFromList = function(list,index){
     	list.splice(index, 1);  
@@ -19,16 +19,17 @@ angular.module('app').controller("ConfigurationController", function($scope){
     	var regularExpression = new RegExp(regEx);
     	return (regularExpression.exec(vm.testUrl) != null);
     }
-    loadConfiguration(function(configuration){
-    	vm.configuration = configuration;
-    	
-    });
+    this.loadConfiguration = function(){
+    	vm.configuration = angular.fromJson(chrome.extension.getBackgroundPage().loadConfiguration());
+    };
+
+    this.saveConfiguration = function(){
+ 		chrome.extension.getBackgroundPage().saveConfiguration(angular.toJson(vm.configuration));
+    }
+
+    this.loadConfiguration();
 });
 
-function loadConfiguration(successFunc){
-	var conf = [
-			{groupName:"Mongo", regExList :[ ".*mongos.*" ]},
-    		{groupName:"Google", regExList :[ ".*google\\.de.*" ,".*google\\.fr.*", ".*google\\.ch.*"]}
-    	];
-	successFunc(conf);
-}
+document.addEventListener("unload", function(e){
+	alert("CLOSED");
+}, true);
