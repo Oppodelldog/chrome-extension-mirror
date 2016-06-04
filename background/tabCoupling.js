@@ -42,9 +42,9 @@ function findCouplesForTab(tab){
 		configEntry = config[k];
 
 		for(r in configEntry.regExList){
-			var regEx = configEntry.regExList[r];
+			var regExEntry = configEntry.regExList[r];
 		
-			if(urlMatchRegEx(tab.url, regEx)){
+			if(urlMatchRegEx(tab.url, regExEntry.regEx)){
 				findCoupledTabsForTabByUrlRegExList(tab,configEntry.regExList);
 			}	
 		}
@@ -54,8 +54,8 @@ function findCouplesForTab(tab){
 
 function findCoupledTabsForTabByUrlRegExList(tab,regExList){
 	for(k in regExList){
-		var regEx = regExList[k];
-		findCoupledTabsForTabByUrlRegEx(tab,regEx);
+		var regExEntry = regExList[k];
+		findCoupledTabsForTabByUrlRegEx(tab,regExEntry.regEx);
 	}
 }
 
@@ -81,7 +81,7 @@ function addCouplesForTab(tab,couples){
 			tabCouples[tab.id]=[];
 		}
 		for(k in couples){
-			tabCouples[tab.id].push(couples[k]);
+			tabCouples[tab.id][k]=couples[k];
 		}
 	}else{
 		tabCouples[tab.id]=couples;
@@ -117,7 +117,7 @@ function getMatchingTabsByUrlRegEx(tabs, urlRegEx){
  	for(k in tabs){
  		var tab = tabs[k];
  		if(urlMatchRegEx(tab.url,urlRegEx)){
- 			matchingTabs.push(tab.id);
+ 			matchingTabs[tab.id]=tab.id;
 		}	
  	}	
  	return matchingTabs;

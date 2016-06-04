@@ -2,7 +2,7 @@
     <h1>{{vm.title}}</h1>
     <b>This tab is currently mirrored to the following tabs:</b>
     <ul>
-    <li ng-repeat="(key,value) in vm.mirroredTabs">
+    <li ng-repeat="(key,value) in vm.mirroredTabs track by $index" ng-if="value">
       {{value.title}}<br/>
       {{value.url}}
     </li>

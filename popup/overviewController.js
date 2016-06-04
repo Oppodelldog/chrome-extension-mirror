@@ -15,15 +15,15 @@ function loadMirroredTabs(successFunc){
 	chrome.tabs.getSelected(null,function(currentTab){
 		chrome.tabs.query({}, function(allTabs) {
 			var tabInfo = getTabInfoFromTabs(allTabs);
-			
+			var mirroredTabs = [];
 			for(tabId in tabCouples){
 				if(tabId != currentTab.id){
 					continue;
 				}
-				mirroredTabs = [];
+				
 				for(e in tabCouples[tabId])	{
 					var coupledTabId = tabCouples[tabId][e];
-					mirroredTabs.push(tabInfo[coupledTabId]);
+					mirroredTabs[coupledTabId]=tabInfo[coupledTabId];
 				}
 			}
 		successFunc(mirroredTabs)
