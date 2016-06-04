@@ -14,7 +14,7 @@ chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 function broadcastEventToCoupledTabsContentScripts(msg) {
 
 	chrome.tabs.getSelected(null,function(currentTab){
-		var coupledTabs = findCoupleForTab(currentTab.id, currentTab.url);
+		var coupledTabs = findCoupleForTab(currentTab);
 	//console.log(currentTab);
 	    chrome.tabs.query({
 	        url: currentTab.url.split('#')[0]
