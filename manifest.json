@@ -4,7 +4,7 @@
     "manifest_version": 2,
     "browser_action": {
         "default_title": "Mirror tabs!",
-        "default_popup": "popup.html"
+        "default_popup": "popup/index.html"
     },
     "permissions": [
           "tabs"
