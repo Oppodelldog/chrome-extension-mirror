@@ -22,6 +22,30 @@ localStorage["coupling"] = JSON.stringify([
 	}	
 ]);*/
 
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+   if(changeInfo.status == "complete"){
+		refreshCouplesForTabAndItsCouples(tab);
+   }
+});
+
+chrome.tabs.onActivated.addListener(function(evt){ 
+  chrome.tabs.get(evt.tabId, function(tab){ 
+    refreshCouplesForTabAndItsCouples(tab);
+  }); 
+});
+
+function refreshCouplesForTabAndItsCouples(tab){
+	if(typeof tabCouples[tab.id] !== "undefined"){
+		var couples = tabCouples[tab.id];
+		for(k in couples){
+			var coupledTabId = couples[k];
+			removeCouplesForTab({id:coupledTabId});
+		}
+	}
+	removeCouplesForTab(tab);
+   	
+}
+
 function findCouplesForTab(tab){
 	
 	// if tabId is marked to have no couple tabs, abort
@@ -89,7 +113,7 @@ function addCouplesForTab(tab,couples){
 }
 
 function findCoupledTabsForTabByUrlRegEx(tab, urlRegEx){
-	console.debug("find tabCouples by url " + tab.url +" and regEx "+ urlRegEx);
+	console.debug("find tabCouples for tab "+ tab.id +" url " + tab.url +" using regEx "+ urlRegEx);
 	 chrome.tabs.query({},function(allTabs) {
 	 	
 	 	var coupledTabs = getMatchingTabsByUrlRegEx(allTabs,urlRegEx);
