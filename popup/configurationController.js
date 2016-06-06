@@ -21,7 +21,13 @@ var controller = angular.module('app').controller("ConfigurationController", fun
     }
     this.loadConfiguration = function(){
     	vm.configuration = angular.fromJson(chrome.extension.getBackgroundPage().loadConfiguration());
+        if(typeof vm.configuration ==="undefined"){
+            this.prepareInitialConfiguration();
+        }
     };
+    this.prepareInitialConfiguration = function(){
+        vm.configuration = [];
+    }
 
     this.saveConfiguration = function(){
  		chrome.extension.getBackgroundPage().saveConfiguration(angular.toJson(vm.configuration));
