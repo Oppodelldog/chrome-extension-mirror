@@ -33,7 +33,29 @@ ul li ul li{
 	content:  "\2714";
 	color:green;
 }
+/*
 .fail:before{
 	content: "\26A0";
 	color:red;
+}
+*/
+
+#txt-test-url{
+	width:100%;
+}
+
+.configuration-entries > input{
+	width:300px
+}
+.regex-entries input{
+	width:260px;
+}
+
+.configuration > ul{
+	padding-left:0;
+}
+
+li.configuration-entries{
+	border-bottom:1px solid grey;
+	padding-bottom:20px;
 }
