@@ -1,32 +1,43 @@
 function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
-    chrome.tabs.getSelected(null, function (currentTab) {
-        if (currentTab.id === sender.tab.id) {
+    withActiveTab((activeTab) => {
+        if (activeTab.id === sender.tab.id) {
             broadcastEventToCoupledTabsContentScripts(request);
         }
-    })
+    });
 }
 
 chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 
 function broadcastEventToCoupledTabsContentScripts(msg) {
-
-    chrome.tabs.getSelected(null, function (currentTab) {
-        const coupledTabs = findCouplesForTab(currentTab);
-        chrome.tabs.query({}, function (allTabs) {
-            for (let k in allTabs) {
-                if (!allTabs.hasOwnProperty(k)) {
-                    continue;
-                }
-
-                const tab = allTabs[k];
-                if (tab.id !== currentTab.id) {
-                    if (isTabsIdInArray(tab.id, coupledTabs)) {
-                        chrome.tabs.sendMessage(tab.id, msg, function (response) {
-                            //console.info("response: " + response);
-                        });
-                    }
-                }
-            }
+    withActiveTab((activeTab) => {
+        eachConnectedTab(activeTab, (connectedTab) => {
+            chrome.tabs.sendMessage(connectedTab.id, msg, function (response) {
+                //console.info("response: " + response);
+            });
         });
     });
+}
+
+function withActiveTab(f) {
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+        f(tabs[0])
+    });
+}
+
+function eachConnectedTab(activeTab, f) {
+    const coupledTabs = findCouplesForTab(activeTab);
+    chrome.tabs.query({}, function (allTabs) {
+        for (let k in allTabs) {
+            if (!allTabs.hasOwnProperty(k)) {
+                continue;
+            }
+
+            const tab = allTabs[k];
+            if (tab.id !== activeTab.id) {
+                if (isTabsIdInArray(tab.id, coupledTabs)) {
+                    f(tab)
+                }
+            }
+        }
+    })
 }
