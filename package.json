@@ -1,0 +1,9 @@
+{
+  "name": "chrome-extension-mirror",
+  "version": "0.0.0",
+  "description": "chrome extension that mirrors user actions between tabs",
+  "main": "popup/index.html",
+  "repository": "https://github.com/Oppodelldog/chrome-extension-mirror.git",
+  "author": "Oppodelldog <odog@netcologne.de>",
+  "license": "MIT"
+}
