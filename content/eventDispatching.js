@@ -1,6 +1,6 @@
 function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse) {
-	if(request.elementPath!=""){
-		var element = DomUtil.findElementByPath(request.elementPath);
+	if(request.elementPath!==""){
+		const element = DomUtil.findElementByPath(request.elementPath);
 		if(element === null){
 			// element not found by path
 		    // might be an issue while ressembling the elements path, but also occurs
@@ -53,19 +53,19 @@ function dispatchDomElementEvent(request, element, sendResponse){
 }
 
 function dispatchEvent(eventName,element){
-	ev = new Event(eventName);
+	let ev = new Event(eventName);
 	element.dispatchEvent(ev);
 }
 
 function dispatchMouseEvent(eventName,element,mouseEventInfo){
-	ev = new MouseEvent(eventName,{
-	    bubbles: true,
-	    cancelable: true,
-    	clientX:mouseEventInfo.clientX,
-		clientY:mouseEventInfo.clientY,
-		screenX:mouseEventInfo.screenX,
-		screenY:mouseEventInfo.screenY,
+	let ev = new MouseEvent(eventName, {
+		bubbles: true,
+		cancelable: true,
+		clientX: mouseEventInfo.clientX,
+		clientY: mouseEventInfo.clientY,
+		screenX: mouseEventInfo.screenX,
+		screenY: mouseEventInfo.screenY,
 		inputDeviceCapabilities: new InputDeviceCapabilities()
-	  });
+	});
 	element.dispatchEvent(ev);
 }

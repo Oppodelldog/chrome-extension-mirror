@@ -64,7 +64,7 @@ document.addEventListener('click', function (e) {
 		But I really like to write reliable software without any mysterios logic
 		so this needs to be fixed.
 	*/
-	if(e.detail==0){
+	if(e.detail===0){
 		return;
 	}
 	broadcastMouseEvent('click',e);

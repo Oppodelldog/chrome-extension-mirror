@@ -1,15 +1,19 @@
-<html>
+<html lang="en">
 <head>
-<script src="angular.min.js"></script>
-<script src="angular-route.min.js"></script>
-<script src="app.js"></script>
-<script src="overviewController.js"></script>
-<script src="configurationController.js"></script>
-<script src="router.js"></script>
-<link rel="stylesheet" type="text/css" href="css/style.css"></link>
+    <script src="angular.min.js"></script>
+    <script src="angular-route.min.js"></script>
+    <script src="app.js"></script>
+    <script src="overviewController.js"></script>
+    <script src="configurationController.js"></script>
+    <script src="router.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <title>Mirror</title>
 </head>
 <body ng-app="app">
-	<ul class="navigation"><li><a href="#overview">Overview</a></li><li><a href="#configuration">Configuration</a></li></ul>
-    <div ng-view></div>
+<ul class="navigation">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#configuration">Configuration</a></li>
+</ul>
+<div ng-view></div>
 </body>
 </html>
