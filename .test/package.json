@@ -1,0 +1,9 @@
+{
+  "name": "chrome-extension-mirror-test",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

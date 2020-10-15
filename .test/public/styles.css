@@ -1,0 +1,11 @@
+form * {
+    display: block;
+}
+
+form * + label {
+    margin-top: 10px;
+}
+
+p{
+    font-weight: bold;
+}

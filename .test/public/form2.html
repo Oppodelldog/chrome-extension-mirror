@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Form2</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<script>
+    function changeCallback(e) {
+        console.log(e)
+        e.stopPropagation();
+    }
+</script>
+<a href="index.html">Index</a>
+<h1>Form2</h1>
+<p>
+    Html form elements with callback that stops event propagation.<br/>
+        This currently prevents the extention to propagate events to the mirrored tabs.<br/>
+        Introduced to help testing the enhancement of working around stopped event propagation.<br/>
+</p>
+<form id="form2">
+    <label for="textarea2">textarea</label><textarea id="textarea2" onchange="changeCallback(event)"></textarea>
+    <label for="text2">text</label><input id="text2" type="text" onchange="changeCallback(event)"/>
+    <label for="radio21">radio</label>
+    <input id="radio21" name="radio2" value="1" type="radio" onchange="changeCallback(event)"/>
+    <label for="radio22">radio</label>
+    <input id="radio22" name="radio2" value="2" type="radio" onchange="changeCallback(event)"/>
+    <label for="checkbox2">checkbox</label><input id="checkbox2" type="checkbox" onchange="changeCallback(event)"/>
+    <label for="color2">color</label><input id="color2" type="color" onchange="changeCallback(event)"/>
+    <label for="file2">file</label><input id="file2" type="file" onchange="changeCallback(event)"/>
+    <label for="image2">image</label><input id="image2" type="image" alt="" onchange="changeCallback(event)"/>
+    <label for="number2">number</label><input id="number2" type="number" onchange="changeCallback(event)"/>
+    <label for="range2">range</label><input id="range2" type="range" onchange="changeCallback(event)"/>
+    <label for="time2">time</label><input id="time2" type="time" onchange="changeCallback(event)"/>
+    <label for="date2">date</label><input id="date2" type="date" onchange="changeCallback(event)"/>
+    <label for="datetime2">datetime</label><input id="datetime2" type="datetime-local" onchange="changeCallback(event)">
+    <label for="month2">month</label><input id="month2" type="month" onchange="changeCallback(event)"/>
+    <label for="week2">week</label><input id="week2" type="week" onchange="changeCallback(event)"/>
+    <label for="select2">select</label>
+    <select id="select2" onchange="changeCallback(event)">
+        <option value='1'>Option 1</option>
+        <option value='2'>Option 2</option>
+    </select>
+    <label for="button2">button</label><input id="button2" type="button" value="button"
+                                              onclick="this.value=new Date().getTime()"/>
+    <label for="submit2">button</label><input id="submit2" name="submit" type="submit" value="Submit"/>
+</form>
+</body>
+</html>

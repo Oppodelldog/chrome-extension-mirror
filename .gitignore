@@ -2,3 +2,5 @@
 !.docker/droxy.toml
 !.docker/start.sh
 
+yarn.lock
+yarn-error.log

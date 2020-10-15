@@ -8,7 +8,7 @@
     addGroups       = true
     isInteractive   = true
     requireEnvVars  = true
-    image           = "node:14.0.0"
+    image           = "node:14.10.1"
     volumes         = [
         "${PWD}:${PWD}",
         "${HOME}:${HOME}",
@@ -34,6 +34,17 @@
     name="npx"
     template="node-template"
     entryPoint = "npx"
+
+   [[command]]
+   name="testserver"
+   template="node-template"
+   entryPoint = "node"
+   envvars         = [
+       "PWD=${PWD}",
+       "HOME=${HOME}"
+   ]
+   ports=["8080:8080"]
+   command="index.js"
 
   [[command]]
     name="yarn"
