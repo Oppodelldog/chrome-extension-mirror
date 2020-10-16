@@ -7,16 +7,16 @@
 <body>
 <script>
     function changeCallback(e) {
-        console.log(e)
-        e.stopPropagation();
+        console.log("callback 1")
+        e.stopPropagation()
     }
 </script>
 <a href="index.html">Index</a>
 <h1>Form2</h1>
 <p>
     Html form elements with callback that stops event propagation.<br/>
-        This currently prevents the extention to propagate events to the mirrored tabs.<br/>
-        Introduced to help testing the enhancement of working around stopped event propagation.<br/>
+    This currently prevents the extention to propagate events to the mirrored tabs.<br/>
+    Introduced to help testing the enhancement of working around stopped event propagation.<br/>
 </p>
 <form id="form2">
     <label for="textarea2">textarea</label><textarea id="textarea2" onchange="changeCallback(event)"></textarea>
@@ -45,5 +45,12 @@
                                               onclick="this.value=new Date().getTime()"/>
     <label for="submit2">button</label><input id="submit2" name="submit" type="submit" value="Submit"/>
 </form>
+<script>
+    window.onload = () => {
+        document.addEventListener("change",(e)=>{
+            console.log("callback 2")
+        })
+    };
+</script>
 </body>
 </html>
