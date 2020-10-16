@@ -20,7 +20,10 @@ function broadcastEventToCoupledTabsContentScripts(msg) {
 
 function withActiveTab(f) {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
-        f(tabs[0])
+        const activeTab = tabs[0];
+        if (activeTab) {
+            f(activeTab);
+        }
     });
 }
 
