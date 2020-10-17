@@ -1,4 +1,4 @@
-const debugEvents = false;
+const debugEvents = true;
 const debugElementPathIssues = false;
 
 function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse) {
@@ -38,12 +38,10 @@ function dispatchDomElementEvent(request, element, sendResponse) {
                 element.select();
             }
             break;
-
         case 'change':
             element.value = request.value;
             dispatchEvent('change', element);
             break;
-
         case 'click':
             dispatchMouseEvent('click', element, request.mouseEventInfo);
             break;

@@ -43,30 +43,8 @@ function broadcastScrollEvent(event) {
 }
 
 document.addEventListener('click', function (e) {
-    /*
-        overlaying elements still a problem.
-        sample one some webpage:
-        <label>
-            <span/>
-            <input type=checkbox/>
-        </abel>
-        the span overlays the checkbox.
-        if you click the span three events are fired
-        1. click on span
-        2. click on input
-        3. focus on input (that should be default browser behavior event)
-
-        but if the two first events are broadcasted to another tab it will
-        dispatch both click events after each other which lead to
-        1. select the checkbox
-        2. deselect the checkbox
-        *BAM* inconsistent state ! mirror plugin go home!
-
-        by trial an error i fixed this using that mysterious detail flag.
-        But I really like to write reliable software without any mysterios logic
-        so this needs to be fixed.
-    */
-    if (e.detail === 0) {
+    let clickCount = e.detail;
+    if (clickCount === 0) {
         return;
     }
     broadcastMouseEvent('click', e);

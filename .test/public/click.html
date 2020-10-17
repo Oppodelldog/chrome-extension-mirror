@@ -1,0 +1,41 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Click</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a href="index.html">Index</a>
+<h1>Click</h1>
+
+<p>
+<h2>Simple case</h2>
+One click event is fired.
+</p>
+
+<label>
+    checkbox
+</label>
+<input type="checkbox"/>
+
+<p>
+<h2>Tricky case</h2>
+Two click events are fired for one real click:<br/><br/>
+The checkbox is nested in a label.<br/>
+This will cause two click events to be fired, one for the checkbox and one on the label.<br/>
+If the extension would blindly synchronize all events this would lead to<br/>
+<ul>
+    <li>check</li>
+    <li>uncheck</li>
+</ul>
+<br/>
+So UI would be out of sync if it would broadcast both events.
+</p>
+
+<label>
+    checkbox
+    <input type="checkbox"/>
+</label>
+
+</body>
+</html>
