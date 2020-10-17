@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener(receiveEventBroadcastFromBackgroundScript);
 function dispatchNonDomElementEvent(request, sendResponse) {
     switch (request.event) {
         case 'scroll':
-            window.scroll(request.scrollX, request.scrollY);
+            dispatchScrollEvent(window, request);
             break;
     }
 }
@@ -54,6 +54,9 @@ function dispatchDomElementEvent(request, element, sendResponse) {
         case 'mouseup':
             dispatchMouseEvent('mouseup', element, request.mouseEventInfo);
             break;
+        case 'scroll':
+            dispatchScrollEvent(element, request);
+            break;
     }
 }
 
@@ -73,4 +76,8 @@ function dispatchMouseEvent(eventName, element, mouseEventInfo) {
         inputDeviceCapabilities: new InputDeviceCapabilities()
     });
     element.dispatchEvent(ev);
+}
+
+function dispatchScrollEvent(element, request) {
+    element.scroll(request.scrollX, request.scrollY);
 }
