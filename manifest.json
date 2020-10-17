@@ -11,6 +11,7 @@
   ],
   "background": {
     "scripts": [
+      "background/tabs.js",
       "background/eventBroadcasting.js",
       "background/tabCoupling.js",
       "background/configuration.js"

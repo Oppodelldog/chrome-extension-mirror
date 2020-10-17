@@ -1,61 +1,70 @@
-/*
-    *************************
-	* First scratch version *
-	*************************
+/**
+ Coupler couples tabs that match the same mirror group.
+ */
+const Coupler = {
+    tabCouples: [],
+    hasTabCoupledTabs: function (tab) {
+        return (typeof this.tabCouples[tab.id] !== "undefined");
+    },
+    addCouplesForTab(tab, couples) {
+        if (typeof this.tabCouples[tab.id] !== "undefined") {
+            if (coupler.isTabBlockedFromDetection(tab)) {
+                this.tabCouples[tab.id] = [];
+            }
+            for (let k in couples) {
+                if (!couples.hasOwnProperty(k)) {
+                    continue;
+                }
 
-	Methods here will find matching coupled tabs for the given tabId and tabUrl.
-
-	basically the following structure will be build:
-	tabCouples[tabId]=[coupledTabsIds...]
-
-	this will help the event broadcaster to find the tabs for event broadcasting.
-*/
-const tabCouples = [];
-
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status === "complete") {
-        refreshCouplesForTabAndItsCouples(tab);
+                this.tabCouples[tab.id][k] = couples[k];
+            }
+        } else {
+            this.tabCouples[tab.id] = couples;
+        }
+    },
+    removeCouplesForTab(tab) {
+        delete this.tabCouples[tab.id];
+    },
+    isTabBlockedFromDetection(tab) {
+        return (this.tabCouples[tab.id] === 0);
+    },
+    blockTabFromDetection(tab) {
+        this.tabCouples[tab.id] = 0;
+    },
+    getCouples(tab) {
+        return this.tabCouples[tab.id];
     }
-});
+};
 
-chrome.tabs.onActivated.addListener(function (evt) {
-    chrome.tabs.get(evt.tabId, function (tab) {
-        refreshCouplesForTabAndItsCouples(tab);
-    });
-});
+const coupler = Object.create(Coupler)
 
 function refreshCouplesForTabAndItsCouples(tab) {
-    if (typeof tabCouples[tab.id] !== "undefined") {
-        const couples = tabCouples[tab.id];
+    if (coupler.hasTabCoupledTabs(tab)) {
+        const couples = coupler.getCouples(tab);
         for (let k in couples) {
             if (!couples.hasOwnProperty(k)) {
                 continue;
             }
 
             const coupledTabId = couples[k];
-            removeCouplesForTab({id: coupledTabId});
+            coupler.removeCouplesForTab({id: coupledTabId});
         }
     }
-    removeCouplesForTab(tab);
-
+    coupler.removeCouplesForTab(tab);
 }
 
-function findCouplesForTab(tab) {
-
+function findCouplesForTab(tab, allTabs, getConfig) {
     // if tabId is marked to have no couple tabs, abort
-    if (isTabBlockedFromDetection(tab)) {
-        //console.error("url not coupled " + tab.url);
-        return null;
+    if (coupler.isTabBlockedFromDetection(tab)) {
+        return [];
     }
 
-    if (hasTabCoupledTabs(tab)) {
-        //console.info("found tabCouples in cache " + tab.id);
-        //console.log(tabCouples[tabId]);
-        return tabCouples[tab.id];
+    if (coupler.hasTabCoupledTabs(tab)) {
+        return coupler.getCouples(tab);
     }
+    coupler.blockTabFromDetection(tab);
 
-    blockTabFromDetection(tab);
-    const config = JSON.parse(loadConfiguration());
+    const config = getConfig();
     for (let k in config) {
         if (!config.hasOwnProperty(k)) {
             continue;
@@ -71,71 +80,36 @@ function findCouplesForTab(tab) {
             const regExEntry = configEntry.regExList[r];
 
             if (urlMatchRegEx(tab.url, regExEntry.regEx)) {
-                findCoupledTabsForTabByUrlRegExList(tab, configEntry.regExList);
+                findCoupledTabsForTabByUrlRegExList(tab, allTabs, configEntry.regExList);
             }
         }
     }
-    return null;
+
+    if (coupler.hasTabCoupledTabs(tab)) {
+        return coupler.getCouples(tab);
+    }
+
+    return [];
 }
 
-function findCoupledTabsForTabByUrlRegExList(tab, regExList) {
+function findCoupledTabsForTabByUrlRegExList(tab, allTabs, regExList) {
     for (let k in regExList) {
         if (!regExList.hasOwnProperty(k)) {
             continue;
         }
 
         const regExEntry = regExList[k];
-        findCoupledTabsForTabByUrlRegEx(tab, regExEntry.regEx);
+        findCoupledTabsForTabByUrlRegEx(tab, allTabs, regExEntry.regEx);
     }
 }
 
-function hasTabCoupledTabs(tab) {
-    return (typeof tabCouples[tab.id] !== "undefined");
-}
+function findCoupledTabsForTabByUrlRegEx(tab, allTabs, urlRegEx) {
+    let coupledTabs = getMatchingTabsByUrlRegEx(allTabs, urlRegEx);
+    coupledTabs = removeTabIdFromCouples(tab, coupledTabs)
 
-function isTabBlockedFromDetection(tab) {
-    return (tabCouples[tab.id] === 0);
-}
-
-function blockTabFromDetection(tab) {
-    tabCouples[tab.id] = 0;
-}
-
-function removeCouplesForTab(tab) {
-    delete tabCouples[tab.id];
-}
-
-function addCouplesForTab(tab, couples) {
-    if (typeof tabCouples[tab.id] !== "undefined") {
-        if (isTabBlockedFromDetection(tab)) {
-            tabCouples[tab.id] = [];
-        }
-        for (let k in couples) {
-            if (!couples.hasOwnProperty(k)) {
-                continue;
-            }
-
-            tabCouples[tab.id][k] = couples[k];
-        }
-    } else {
-        tabCouples[tab.id] = couples;
+    if (coupledTabs.length > 0) {
+        coupler.addCouplesForTab(tab, coupledTabs);
     }
-}
-
-function findCoupledTabsForTabByUrlRegEx(tab, urlRegEx) {
-    console.debug("find tabCouples for tab " + tab.id + " url " + tab.url + " using regEx " + urlRegEx);
-    chrome.tabs.query({}, function (allTabs) {
-        let coupledTabs = getMatchingTabsByUrlRegEx(allTabs, urlRegEx);
-        coupledTabs = removeTabIdFromCouples(tab, coupledTabs)
-
-        if (coupledTabs.length > 0) {
-            addCouplesForTab(tab, coupledTabs);
-            console.log("found tabs for url " + tab.url);
-            console.log(tabCouples)
-        } else {
-            console.log("found nothing");
-        }
-    });
 }
 
 function removeTabIdFromCouples(tab, couples) {
@@ -161,7 +135,7 @@ function getMatchingTabsByUrlRegEx(tabs, urlRegEx) {
 
         const tab = tabs[k];
         if (urlMatchRegEx(tab.url, urlRegEx)) {
-            matchingTabs[tab.id] = tab.id;
+            matchingTabs.push(tab.id);
         }
     }
 

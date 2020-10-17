@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - 14
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+env:
+  global:
+    - CI=test
+
+before_script:
+  - yarn install
+
+script:
+  - yarn jest
