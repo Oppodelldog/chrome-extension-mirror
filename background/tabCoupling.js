@@ -3,23 +3,31 @@
  */
 const Coupler = {
     tabCouples: [],
+    onDecouple: (tabId) => {
+    },
+    onCouple: (tabId) => {
+    },
     hasTabCoupledTabs: function (tab) {
-        return (typeof this.tabCouples[tab.id] !== "undefined");
+        return (typeof this.tabCouples[tab.id] !== "undefined" && this.tabCouples[tab.id]  !== 0);
     },
     addCouplesForTab(tab, couples) {
         if (typeof this.tabCouples[tab.id] !== "undefined") {
             if (coupler.isTabBlockedFromDetection(tab)) {
                 this.tabCouples[tab.id] = [];
             }
-            for (let k in couples) {
-                if (!couples.hasOwnProperty(k)) {
-                    continue;
-                }
-
-                this.tabCouples[tab.id][k] = couples[k];
-            }
         } else {
-            this.tabCouples[tab.id] = couples;
+            this.onCouple(tab.id);
+            this.tabCouples[tab.id] = [];
+        }
+
+        for (let k in couples) {
+            if (!couples.hasOwnProperty(k)) {
+                continue;
+            }
+
+            let tabId = couples[k];
+            this.tabCouples[tab.id][k] = tabId;
+            this.onCouple(tabId);
         }
     },
     removeCouplingForTab(tab) {
@@ -33,24 +41,29 @@ const Coupler = {
     },
     getCouples(tab) {
         return this.tabCouples[tab.id];
+    },
+    cleanCouplings(tab) {
+        if (this.hasTabCoupledTabs(tab)) {
+            const couples = this.getCouples(tab);
+            for (let k in couples) {
+                if (!couples.hasOwnProperty(k)) {
+                    continue;
+                }
+
+                const coupledTabId = couples[k];
+                this.removeCouplingForTab({id: coupledTabId});
+                this.onDecouple(coupledTabId)
+            }
+        }
+        this.removeCouplingForTab(tab);
+        this.onDecouple(tab.id)
     }
 };
 
 const coupler = Object.create(Coupler)
 
 function removeCouplesForTabAndItsCouples(tab) {
-    if (coupler.hasTabCoupledTabs(tab)) {
-        const couples = coupler.getCouples(tab);
-        for (let k in couples) {
-            if (!couples.hasOwnProperty(k)) {
-                continue;
-            }
-
-            const coupledTabId = couples[k];
-            coupler.removeCouplingForTab({id: coupledTabId});
-        }
-    }
-    coupler.removeCouplingForTab(tab);
+    coupler.cleanCouplings(tab)
 }
 
 function findCouplesForTab(tab, allTabs, getConfig) {
