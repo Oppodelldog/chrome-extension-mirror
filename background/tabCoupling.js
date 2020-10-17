@@ -1,26 +1,16 @@
 /*
-	First scratch version
-	methods here will find matching coupled tabs for the giveb tabId and tabUrl
+    *************************
+	* First scratch version *
+	*************************
+
+	Methods here will find matching coupled tabs for the given tabId and tabUrl.
 
 	basically the following structure will be build:
 	tabCouples[tabId]=[coupledTabsIds...]
 
-	this will help the event broadcaster to find the tabs events musts be sent to
-
-	the config currently is hard coded and should be moved into localStorage managed by popup.js
+	this will help the event broadcaster to find the tabs for event broadcasting.
 */
 const tabCouples = [];
-/*
-localStorage["coupling"] = JSON.stringify([
-	{
-		groupName :"Mongo",
-		regExList :[ {regEx:".*mongos.*"} ]
-	},
-	{
-		groupName:"Google",
-		regExList :[ {regEx:".*google\\.de.*"} ,{regEx:".*google\\.fr.*"}, {regEx:".*google\\.ch.*"}]
-	}	
-]);*/
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === "complete") {
