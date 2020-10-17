@@ -1,15 +1,21 @@
+const debugEvents = true;
+
 function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse) {
-	if(request.elementPath!==""){
-		const element = DomUtil.findElementByPath(request.elementPath);
-		if(element === null){
-			// element not found by path
-		    // might be an issue while ressembling the elements path, but also occurs
-		    // since the content scripts are injected all iframes like	
-		    return;
-		}		
-		dispatchDomElementEvent(request,element);
-	}else{
-    	dispatchNonDomElementEvent(request,sendResponse);  	
+    if (debugEvents === true && request.event === "change") {
+        console.log(request)
+    }
+
+    if (request.elementPath !== "") {
+        const element = DomUtil.findElementByPath(request.elementPath);
+        if (element === null) {
+            // element not found by path
+            // might be an issue while ressembling the elements path, but also occurs
+            // since the content scripts are injected all iframes like
+            return;
+        }
+        dispatchDomElementEvent(request, element);
+    } else {
+        dispatchNonDomElementEvent(request, sendResponse);
     }
 }
 chrome.runtime.onMessage.addListener(receiveEventBroadcastFromBackgroundScript);

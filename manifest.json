@@ -1,24 +1,35 @@
 {
-    "name": "mirror",
-    "version": "0.0.1",
-    "manifest_version": 2,
-    "browser_action": {
-        "default_title": "Mirror tabs!",
-        "default_popup": "popup/index.html"
-    },
-    "permissions": [
-          "tabs"
-        ],
-    "background": {
-    "scripts": ["background/eventBroadcasting.js","background/tabCoupling.js","background/configuration.js"],
+  "name": "mirror",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_title": "Mirror tabs!",
+    "default_popup": "popup/index.html"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "background": {
+    "scripts": [
+      "background/eventBroadcasting.js",
+      "background/tabCoupling.js",
+      "background/configuration.js"
+    ],
     "persistent": false
-	},
-    "content_scripts": [
-        {
-            "matches": ["http://*/*", "https://*/*"],
-            "js": ["content/dom.js","content/eventCapturing.js","content/eventDispatching.js"],
-            "run_at": "document_end",
-            "all_frames": true
-        }
-    ]    
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content/dom.js",
+        "content/eventCapturing.js",
+        "content/eventDispatching.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ]
 }

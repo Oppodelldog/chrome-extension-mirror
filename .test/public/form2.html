@@ -6,17 +6,26 @@
 </head>
 <body>
 <script>
-    function changeCallback(e) {
-        console.log(e)
-        e.stopPropagation();
+    function changeCallback(event) {
+        console.log("change callback 1")
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        event.preventDefault()
+    }
+
+    function clickButtonCallback(event) {
+        event.target.value = new Date().getTime();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        event.preventDefault()
     }
 </script>
 <a href="index.html">Index</a>
 <h1>Form2</h1>
 <p>
     Html form elements with callback that stops event propagation.<br/>
-        This currently prevents the extention to propagate events to the mirrored tabs.<br/>
-        Introduced to help testing the enhancement of working around stopped event propagation.<br/>
+    This test page enures that the extensions event handlers are registered using the 'useCapture' flag.
+    Should be ensured in a unit test as soon as this project has some.
 </p>
 <form id="form2">
     <label for="textarea2">textarea</label><textarea id="textarea2" onchange="changeCallback(event)"></textarea>
@@ -41,9 +50,29 @@
         <option value='1'>Option 1</option>
         <option value='2'>Option 2</option>
     </select>
-    <label for="button2">button</label><input id="button2" type="button" value="button"
-                                              onclick="this.value=new Date().getTime()"/>
+    <label for="button2">button</label>
+    <input id="button2" type="button" value="button"
+           onmousedown="event.stopImmediatePropagation()"
+           onmouseup="event.stopImmediatePropagation()"
+           onclick="clickButtonCallback(event)"/>
+    <label for="scroll2">scroll</label>
+    <div id="scroll2" onscroll="event.stopImmediatePropagation()"
+         style="height:50px; border:1px solid black; padding:10px; overflow-y:scroll">
+        ScrollTest<br/>ScrollTest<br/>ScrollTest<br/>ScrollTest<br/>ScrollTest<br/>ScrollTest<br/>ScrollTest<br/>
+    </div>
     <label for="submit2">button</label><input id="submit2" name="submit" type="submit" value="Submit"/>
 </form>
+<script>
+    window.onload = () => {
+        document.addEventListener("change", (e) => {
+            console.log("change callback 2")
+        })
+        document.addEventListener("click", (e) => {
+            if (e.target.id === "button2") {
+                console.log("click callback 2")
+            }
+        })
+    };
+</script>
 </body>
 </html>
