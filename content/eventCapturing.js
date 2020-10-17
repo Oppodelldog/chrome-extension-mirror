@@ -31,11 +31,14 @@ function broadcastChangeEvent(event) {
 }
 
 function broadcastScrollEvent(event) {
+    const el = event.target;
+    const isDocument = (event.target === document)
+
     broadCastToBackgroundScript({
-        elementPath: '',
+        elementPath: DomUtil.getDomPath(el),
         event: 'scroll',
-        scrollY: this.scrollY,
-        scrollX: this.scrollX
+        scrollY: (isDocument) ? this.scrollY : el.scrollTop,
+        scrollX: (isDocument) ? this.scrollX : el.scrollLeft
     });
 }
 
