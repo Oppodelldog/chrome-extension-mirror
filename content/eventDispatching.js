@@ -8,8 +8,10 @@ function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse
 
     if (request.elementPath !== "") {
         const element = DomUtil.findElementByPath(request.elementPath);
-        if (element === null && debugElementPathIssues) {
-            console.warn("was not able to find element by path: ", request.elementPath)
+        if (element === null) {
+            if (debugElementPathIssues) {
+                console.warn("was not able to find element by path: ", request.elementPath)
+            }
             return;
         }
         dispatchDomElementEvent(request, element);
