@@ -1,8 +1,4 @@
 const rewire = require('rewire');
-loadConfiguration = function () {
-    return "HELLO"
-};
-
 const code = rewire('./tabCoupling.js');
 
 test('add/remove coupled tabs', () => {
