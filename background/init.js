@@ -1,0 +1,1 @@
+initTabs(chrome)

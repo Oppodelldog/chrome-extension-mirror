@@ -13,20 +13,22 @@ function delTab(tab) {
     delete allTabs[tab.id];
 }
 
-window.chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    addTab(tab);
-    if (changeInfo.status === "complete") {
-        refreshCouplesForTabAndItsCouples(tab);
-    }
-});
-
-window.chrome.tabs.onActivated.addListener(function (evt) {
-    chrome.tabs.get(evt.tabId, function (tab) {
+function initTabs(chrome) {
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         addTab(tab);
-        refreshCouplesForTabAndItsCouples(tab);
+        if (changeInfo.status === "complete") {
+            refreshCouplesForTabAndItsCouples(tab);
+        }
     });
-});
+
+    chrome.tabs.onActivated.addListener(function (evt) {
+        chrome.tabs.get(evt.tabId, function (tab) {
+            addTab(tab);
+            refreshCouplesForTabAndItsCouples(tab);
+        });
+    });
 
 
-window.chrome.tabs.onCreated.addListener(addTab);
-window.chrome.tabs.onRemoved.addListener(delTab);
+    chrome.tabs.onCreated.addListener(addTab);
+    chrome.tabs.onRemoved.addListener(delTab);
+}
