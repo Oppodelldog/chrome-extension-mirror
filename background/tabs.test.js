@@ -1,16 +1,22 @@
 const chrome = require("sinon-chrome");
 const sinon = require("sinon")
 const rewire = require('rewire');
-let code = null;
+let moduleUnderTest = null;
+let initTabs = null;
+let allTabs = null;
+let refreshCouplesForTabAndItsCouples = null;
 
 describe("tabs", () => {
     beforeEach(() => {
         chrome.flush();
-        code = rewire('./tabs.js');
+        moduleUnderTest = rewire('./tabs.js');
+        initTabs = moduleUnderTest.__get__('initTabs');
+        allTabs = moduleUnderTest.__get__('allTabs');
+        refreshCouplesForTabAndItsCouples = sinon.spy()
+        moduleUnderTest.__set__('refreshCouplesForTabAndItsCouples', refreshCouplesForTabAndItsCouples)
     })
 
     test('initTabs', () => {
-        const initTabs = code.__get__('initTabs');
 
         initTabs(chrome)
 
@@ -21,9 +27,6 @@ describe("tabs", () => {
     });
 
     test('tab onUpdated - adds tab', () => {
-        const initTabs = code.__get__('initTabs');
-        const allTabs = code.__get__('allTabs');
-
         let tabStub = {id: 1};
 
         initTabs(chrome)
@@ -34,25 +37,19 @@ describe("tabs", () => {
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
     });
 
-    test('tab onUpdated - with stauts "complete" it calls refreshCouplesForTabAndItsCouples', () => {
-        const initTabs = code.__get__('initTabs');
-
+    test('tab onUpdated - with status "complete" it calls refreshCouplesForTabAndItsCouples', () => {
         let tabStub = {id: 1};
-        let refreshSpy = sinon.spy()
-        code.__set__('refreshCouplesForTabAndItsCouples', refreshSpy)
 
         initTabs(chrome)
 
         // noinspection JSUnresolvedFunction
         chrome.tabs.onUpdated.dispatch(1, {status: "complete"}, tabStub)
 
-        expect(refreshSpy.calledOnce).toBeTruthy()
+        expect(refreshCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
+        expect(refreshCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
     });
 
     test('tab onActivated - resolves tab, adds it and calls refreshCouplesForTabAndItsCouples', () => {
-        const initTabs = code.__get__('initTabs');
-        const allTabs = code.__get__('allTabs');
-
         let tabActiveInfo = {tabId: 1}
 
         initTabs(chrome)
@@ -64,20 +61,15 @@ describe("tabs", () => {
         expect(chrome.tabs.get.args[0][0]).toEqual(tabActiveInfo.tabId)
 
         let tabStub = {id: 2};
-        let refreshSpy = sinon.spy()
-        code.__set__('refreshCouplesForTabAndItsCouples', refreshSpy)
 
         chrome.tabs.get.args[0][1](tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
-        expect(refreshSpy.calledOnce).toBeTruthy()
-        expect(refreshSpy.args[0][0]).toEqual(tabStub)
+        expect(refreshCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
+        expect(refreshCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
     })
 
     test('tab onCreated - adds tab', () => {
-        const initTabs = code.__get__('initTabs');
-        const allTabs = code.__get__('allTabs');
-
         let tabStub = {id: 1};
 
         initTabs(chrome)
@@ -89,8 +81,8 @@ describe("tabs", () => {
     })
 
     test('tab onRemoved - removes tab', () => {
-        const initTabs = code.__get__('initTabs');
-        const allTabs = code.__get__('allTabs');
+        const initTabs = moduleUnderTest.__get__('initTabs');
+        const allTabs = moduleUnderTest.__get__('allTabs');
 
         let tabStub = {id: 1};
         allTabs[1] = tabStub;
@@ -104,5 +96,4 @@ describe("tabs", () => {
 
         expect(allTabs[tabStub.id]).toBeUndefined();
     })
-
 })
