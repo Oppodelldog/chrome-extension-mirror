@@ -83,7 +83,7 @@ describe("tabs", () => {
         initTabs(chrome)
 
         // noinspection JSUnresolvedFunction
-        chrome.tabs.onCreated.dispatch(1, {}, tabStub)
+        chrome.tabs.onCreated.dispatch(tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
     })
@@ -100,7 +100,7 @@ describe("tabs", () => {
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
 
         // noinspection JSUnresolvedFunction
-        chrome.tabs.onRemoved.dispatch(1, {}, tabStub)
+        chrome.tabs.onRemoved.dispatch(tabStub)
 
         expect(allTabs[tabStub.id]).toBeUndefined();
     })
