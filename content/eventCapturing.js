@@ -92,26 +92,10 @@ document.addEventListener('mousemove', function (e) {
 document.addEventListener('change', function (e) {
         broadcastChangeEvent(e);
     },
-    false
+    true
 );
 window.addEventListener('scroll', function (e) {
         broadcastScrollEvent(e);
     },
     true
 );
-
-window.addEventListener("message", function (messageEvent) {
-    if (messageEvent.source !== window)
-        return;
-
-    if (messageEvent.data.type !== "STOP_PROPAGATION_PROXY")
-        return;
-
-    const e = messageEvent.data.event
-    switch (e.event) {
-        case "change":
-            console.log("dispatch change")
-            broadCastToBackgroundScript(messageEvent.data.event);
-            break;
-    }
-}, true);

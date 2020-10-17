@@ -24,7 +24,6 @@
         "https://*/*"
       ],
       "js": [
-        "content/index.js",
         "content/dom.js",
         "content/eventCapturing.js",
         "content/eventDispatching.js"
@@ -32,9 +31,5 @@
       "run_at": "document_end",
       "all_frames": true
     }
-  ],
-  "web_accessible_resources": [
-    "content/dom.js",
-    "content/eventHandling.js"
   ]
 }
