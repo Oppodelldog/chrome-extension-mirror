@@ -17,14 +17,14 @@ function initTabs(chrome) {
     chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         addTab(tab);
         if (changeInfo.status === "complete") {
-            refreshCouplesForTabAndItsCouples(tab);
+            removeCouplesForTabAndItsCouples(tab);
         }
     });
 
     chrome.tabs.onActivated.addListener(function (evt) {
         chrome.tabs.get(evt.tabId, function (tab) {
             addTab(tab);
-            refreshCouplesForTabAndItsCouples(tab);
+            removeCouplesForTabAndItsCouples(tab);
         });
     });
 

@@ -22,7 +22,7 @@ const Coupler = {
             this.tabCouples[tab.id] = couples;
         }
     },
-    removeCouplesForTab(tab) {
+    removeCouplingForTab(tab) {
         delete this.tabCouples[tab.id];
     },
     isTabBlockedFromDetection(tab) {
@@ -38,7 +38,7 @@ const Coupler = {
 
 const coupler = Object.create(Coupler)
 
-function refreshCouplesForTabAndItsCouples(tab) {
+function removeCouplesForTabAndItsCouples(tab) {
     if (coupler.hasTabCoupledTabs(tab)) {
         const couples = coupler.getCouples(tab);
         for (let k in couples) {
@@ -47,10 +47,10 @@ function refreshCouplesForTabAndItsCouples(tab) {
             }
 
             const coupledTabId = couples[k];
-            coupler.removeCouplesForTab({id: coupledTabId});
+            coupler.removeCouplingForTab({id: coupledTabId});
         }
     }
-    coupler.removeCouplesForTab(tab);
+    coupler.removeCouplingForTab(tab);
 }
 
 function findCouplesForTab(tab, allTabs, getConfig) {

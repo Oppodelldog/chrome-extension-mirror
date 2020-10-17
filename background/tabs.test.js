@@ -4,7 +4,7 @@ const rewire = require('rewire');
 let moduleUnderTest = null;
 let initTabs = null;
 let allTabs = null;
-let refreshCouplesForTabAndItsCouples = null;
+let removeCouplesForTabAndItsCouples = null;
 
 describe("tabs", () => {
     beforeEach(() => {
@@ -12,8 +12,8 @@ describe("tabs", () => {
         moduleUnderTest = rewire('./tabs.js');
         initTabs = moduleUnderTest.__get__('initTabs');
         allTabs = moduleUnderTest.__get__('allTabs');
-        refreshCouplesForTabAndItsCouples = sinon.spy()
-        moduleUnderTest.__set__('refreshCouplesForTabAndItsCouples', refreshCouplesForTabAndItsCouples)
+        removeCouplesForTabAndItsCouples = sinon.spy()
+        moduleUnderTest.__set__('removeCouplesForTabAndItsCouples', removeCouplesForTabAndItsCouples)
     })
 
     test('initTabs', () => {
@@ -37,7 +37,7 @@ describe("tabs", () => {
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
     });
 
-    test('tab onUpdated - with status "complete" it calls refreshCouplesForTabAndItsCouples', () => {
+    test('tab onUpdated - with status "complete" it calls removeCouplesForTabAndItsCouples', () => {
         let tabStub = {id: 1};
 
         initTabs(chrome)
@@ -45,11 +45,11 @@ describe("tabs", () => {
         // noinspection JSUnresolvedFunction
         chrome.tabs.onUpdated.dispatch(1, {status: "complete"}, tabStub)
 
-        expect(refreshCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
-        expect(refreshCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
+        expect(removeCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
+        expect(removeCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
     });
 
-    test('tab onActivated - resolves tab, adds it and calls refreshCouplesForTabAndItsCouples', () => {
+    test('tab onActivated - resolves tab, adds it and calls removeCouplesForTabAndItsCouples', () => {
         let tabActiveInfo = {tabId: 1}
 
         initTabs(chrome)
@@ -65,8 +65,8 @@ describe("tabs", () => {
         chrome.tabs.get.args[0][1](tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
-        expect(refreshCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
-        expect(refreshCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
+        expect(removeCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
+        expect(removeCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
     })
 
     test('tab onCreated - adds tab', () => {
