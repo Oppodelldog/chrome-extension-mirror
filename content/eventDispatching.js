@@ -1,4 +1,4 @@
-const debugEvents = true;
+const debugEvents = false;
 const debugElementPathIssues = false;
 
 function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse) {
