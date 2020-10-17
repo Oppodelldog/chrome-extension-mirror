@@ -14,12 +14,11 @@ describe("tabs", () => {
         allTabs = moduleUnderTest.__get__('allTabs');
         removeCouplesForTabAndItsCouples = sinon.spy()
         moduleUnderTest.__set__('removeCouplesForTabAndItsCouples', removeCouplesForTabAndItsCouples)
+
+        initTabs(chrome)
     })
 
     test('initTabs', () => {
-
-        initTabs(chrome)
-
         expect(chrome.tabs.onUpdated.addListener.calledOnce).toBeTruthy();
         expect(chrome.tabs.onActivated.addListener.calledOnce).toBeTruthy();
         expect(chrome.tabs.onCreated.addListener.calledOnce).toBeTruthy();
@@ -28,8 +27,6 @@ describe("tabs", () => {
 
     test('tab onUpdated - adds tab', () => {
         let tabStub = {id: 1};
-
-        initTabs(chrome)
 
         // noinspection JSUnresolvedFunction
         chrome.tabs.onUpdated.dispatch(1, {}, tabStub)
@@ -40,8 +37,6 @@ describe("tabs", () => {
     test('tab onUpdated - with status "complete" it calls removeCouplesForTabAndItsCouples', () => {
         let tabStub = {id: 1};
 
-        initTabs(chrome)
-
         // noinspection JSUnresolvedFunction
         chrome.tabs.onUpdated.dispatch(1, {status: "complete"}, tabStub)
 
@@ -51,8 +46,6 @@ describe("tabs", () => {
 
     test('tab onActivated - resolves tab, adds it and calls removeCouplesForTabAndItsCouples', () => {
         let tabActiveInfo = {tabId: 1}
-
-        initTabs(chrome)
 
         // noinspection JSUnresolvedFunction
         chrome.tabs.onActivated.dispatch(tabActiveInfo)
@@ -72,8 +65,6 @@ describe("tabs", () => {
     test('tab onCreated - adds tab', () => {
         let tabStub = {id: 1};
 
-        initTabs(chrome)
-
         // noinspection JSUnresolvedFunction
         chrome.tabs.onCreated.dispatch(tabStub)
 
@@ -81,13 +72,8 @@ describe("tabs", () => {
     })
 
     test('tab onRemoved - removes tab', () => {
-        const initTabs = moduleUnderTest.__get__('initTabs');
-        const allTabs = moduleUnderTest.__get__('allTabs');
-
         let tabStub = {id: 1};
         allTabs[1] = tabStub;
-
-        initTabs(chrome)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
 
