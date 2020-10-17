@@ -11,9 +11,7 @@ chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 function broadcastEventToCoupledTabsContentScripts(msg) {
     withActiveTab((activeTab) => {
         eachConnectedTab(activeTab, (connectedTab) => {
-            chrome.tabs.sendMessage(connectedTab.id, msg, function (response) {
-                //console.info("response: " + response);
-            });
+            chrome.tabs.sendMessage(connectedTab.id, msg);
         });
     });
 }

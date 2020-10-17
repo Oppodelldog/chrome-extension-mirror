@@ -30,7 +30,7 @@ function dispatchNonDomElementEvent(request, sendResponse) {
     }
 }
 
-function dispatchDomElementEvent(request, element, sendResponse) {
+function dispatchDomElementEvent(request, element) {
     switch (request.event) {
         case 'focus':
             element.focus();
