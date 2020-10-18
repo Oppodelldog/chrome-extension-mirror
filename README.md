@@ -1,10 +1,9 @@
 # chrome-extension-mirror
 
-This extension shall once be able to mirror to sites
-which means that you have two tabs and the user-actions performed in the one tab are mirrored in the other tab.
-currently I just need it to ensure that different websites work in the same, but maybe it's useful in other cases.
+This extension supports working in multiple chrome tabs at once.  
 
-So go ahead and make it work!!! :-)
+The intentional idea of this extension is to compare the behavior of two websites by performing actions just once.  
+This is useful for validating release candidates against the current live version of a website. 
 
 ## How to contribute
 1. checkout this repo
