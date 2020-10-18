@@ -117,7 +117,6 @@ function coupleTabsWithGroups(allTabs, getConfig) {
     }
 }
 
-
 function syncConfig(getConfig) {
     const config = getConfig();
     for (let k in config) {
