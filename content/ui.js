@@ -1,7 +1,6 @@
 function handleCouplingStatusChange(request) {
     let elem = document.createElement('div');
     elem.id = "mirror-extension-couplingIndicator"
-    elem.innerHTML = "M"
     elem.title = "This tab is mirrored by Mirror Extension"
     const css = getIndicatorCss();
     const existingElem = document.getElementById(elem.id);
@@ -24,6 +23,7 @@ function handleCouplingStatusChange(request) {
 }
 
 function getIndicatorCss() {
+    const iconUrl = chrome.extension.getURL("icons/icon16.png")
     return `
     position:fixed;
     display:flex;
@@ -34,12 +34,14 @@ function getIndicatorCss() {
     right:0;
     width:40px;
     height:40px;
-    opacity:0.3;
     z-index:100;
-    background-color:rgba(144, 199 ,255, 0.67);
+    background-color:rgba(204, 204 ,204, 0.47);
     font-size: 30px;
     font-weight: bold;
     font-family:monospace;
     color:black;
+    background-image:url(${iconUrl});
+    background-position: center;
+    background-repeat: no-repeat;
     `.replaceAll('\n', '');
 }

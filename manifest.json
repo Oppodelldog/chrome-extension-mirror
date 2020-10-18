@@ -9,6 +9,11 @@
   "permissions": [
     "tabs"
   ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "background": {
     "scripts": [
       "background/tabs.js",
@@ -34,5 +39,8 @@
       "run_at": "document_end",
       "all_frames": true
     }
+  ],
+  "web_accessible_resources": [
+    "icons/*.png"
   ]
 }
