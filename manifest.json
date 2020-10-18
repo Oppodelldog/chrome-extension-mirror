@@ -2,6 +2,12 @@
   "name": "mirror",
   "version": "0.0.1",
   "manifest_version": 2,
+  "description": "Control multiple tabs at once.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "browser_action": {
     "default_title": "Mirror tabs!",
     "default_popup": "popup/index.html"
@@ -9,11 +15,6 @@
   "permissions": [
     "tabs"
   ],
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
   "background": {
     "scripts": [
       "background/tabs.js",
