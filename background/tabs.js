@@ -7,28 +7,42 @@ let allTabs = [];
 
 function addTab(tab) {
     allTabs[tab.id] = tab;
+
+    coupleTabsWithGroups(allTabs, loadConfigurationAsObject);
 }
 
-function delTab(tab) {
-    delete allTabs[tab.id];
+function delTab(tabId) {
+    delete allTabs[tabId];
+    decoupleTabFromGroups(tabId)
 }
 
-function initTabs(chrome) {
+function addOnTabUpdatedListener(chrome) {
     chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-        addTab(tab);
         if (changeInfo.status === "complete") {
-            removeCouplesForTabAndItsCouples(tab);
+            addTab(tab);
         }
     });
+}
 
+function addOnTabActivatedListener(chrome) {
     chrome.tabs.onActivated.addListener(function (evt) {
         chrome.tabs.get(evt.tabId, function (tab) {
             addTab(tab);
-            removeCouplesForTabAndItsCouples(tab);
         });
     });
+}
 
-
-    chrome.tabs.onCreated.addListener(addTab);
+function addOnTabRemovedListener(chrome) {
     chrome.tabs.onRemoved.addListener(delTab);
+}
+
+function addOnTabCreatedListener(chrome) {
+    chrome.tabs.onCreated.addListener(addTab);
+}
+
+function initTabs(chrome) {
+    addOnTabUpdatedListener(chrome);
+    addOnTabActivatedListener(chrome);
+    addOnTabCreatedListener(chrome);
+    addOnTabRemovedListener(chrome);
 }

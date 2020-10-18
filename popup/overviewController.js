@@ -10,14 +10,14 @@ angular.module('app').controller("OverviewController", function ($scope) {
 
 function loadMirroredTabs(successFunc) {
 
-    const tabCouples = chrome.extension.getBackgroundPage().tabCouples;
+    const couplings = [];
 
     chrome.tabs.getSelected(null, function (currentTab) {
         chrome.tabs.query({}, function (allTabs) {
             const tabInfo = getTabInfoFromTabs(allTabs);
             const mirroredTabs = [];
-            for (let tabId in tabCouples) {
-                if (!tabCouples.hasOwnProperty(tabId)) {
+            for (let k in couplings) {
+                if (!couplings.hasOwnProperty(k)) {
                     continue;
                 }
 
@@ -25,12 +25,12 @@ function loadMirroredTabs(successFunc) {
                     continue;
                 }
 
-                for (let e in tabCouples[tabId]) {
-                    if (!tabCouples[tabId].hasOwnProperty(e)) {
+                for (let e in couplings[tabId]) {
+                    if (!couplings[tabId].hasOwnProperty(e)) {
                         continue;
                     }
 
-                    const coupledTabId = tabCouples[tabId][e];
+                    const coupledTabId = couplings[tabId][e];
                     mirroredTabs[coupledTabId] = tabInfo[coupledTabId];
                 }
             }

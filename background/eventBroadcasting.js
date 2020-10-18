@@ -26,7 +26,12 @@ function withActiveTab(f) {
 }
 
 function eachConnectedTab(activeTab, f) {
-    const coupledTabs = findCouplesForTab(activeTab, allTabs, loadConfigurationAsObject);
+    if (!coupler.hasTabCoupledTabs(activeTab.id)) {
+        return
+    }
+
+    const coupledTabs = coupler.getCoupledTabs(activeTab.id)
+
     for (let k in allTabs) {
         if (!allTabs.hasOwnProperty(k)) {
             continue;

@@ -2,141 +2,156 @@
  Coupler couples tabs that match the same mirror group.
  */
 const Coupler = {
-    tabCouples: [],
-    onDecouple: (tabId) => {
+    couplings: {},
+    onDecouple: (tabId, groupName) => {
     },
-    onCouple: (tabId) => {
+    onCouple: (tabId, groupName) => {
     },
-    hasTabCoupledTabs: function (tab) {
-        return (typeof this.tabCouples[tab.id] !== "undefined" && this.tabCouples[tab.id]  !== 0);
+    hasTabCoupledTabs(tabId) {
+        return this.getCoupledTabs(tabId).length > 0;
     },
-    addCouplesForTab(tab, couples) {
-        if (typeof this.tabCouples[tab.id] !== "undefined") {
-            if (coupler.isTabBlockedFromDetection(tab)) {
-                this.tabCouples[tab.id] = [];
-            }
-        } else {
-            this.onCouple(tab.id);
-            this.tabCouples[tab.id] = [];
-        }
-
-        for (let k in couples) {
-            if (!couples.hasOwnProperty(k)) {
+    getCouplings() {
+        return this.couplings;
+    },
+    getCoupledTabs(tabId) {
+        let coupledTabs = [];
+        const tabGroups = this.getTabCouplings(tabId)
+        for (let k in tabGroups) {
+            if (!tabGroups.hasOwnProperty(k)) {
                 continue;
             }
 
-            let tabId = couples[k];
-            this.tabCouples[tab.id][k] = tabId;
-            this.onCouple(tabId);
-        }
-    },
-    removeCouplingForTab(tab) {
-        delete this.tabCouples[tab.id];
-    },
-    isTabBlockedFromDetection(tab) {
-        return (this.tabCouples[tab.id] === 0);
-    },
-    blockTabFromDetection(tab) {
-        this.tabCouples[tab.id] = 0;
-    },
-    getCouples(tab) {
-        return this.tabCouples[tab.id];
-    },
-    cleanCouplings(tab) {
-        if (this.hasTabCoupledTabs(tab)) {
-            const couples = this.getCouples(tab);
-            for (let k in couples) {
-                if (!couples.hasOwnProperty(k)) {
-                    continue;
-                }
-
-                const coupledTabId = couples[k];
-                this.removeCouplingForTab({id: coupledTabId});
-                this.onDecouple(coupledTabId)
+            const group = tabGroups[k]
+            if (group.tabs.filter((e) => e === tabId).length > 0) {
+                coupledTabs = coupledTabs.concat(group.tabs.filter((e) => e !== tabId))
             }
         }
-        this.removeCouplingForTab(tab);
-        this.onDecouple(tab.id)
+
+        return coupledTabs;
+    },
+    addGroup(group) {
+        if (typeof this.couplings[group.groupName] === "undefined") {
+            this.couplings[group.groupName] = {
+                group: group,
+                tabs: []
+            }
+        }
+    },
+    removeGroup(group) {
+        const g = this.couplings[group.groupName];
+        if (typeof g === "undefined") {
+            return;
+        }
+        for (let k in g.tabs) {
+            if (!g.tabs.hasOwnProperty(k)) {
+                continue;
+            }
+
+            const tab = g.tabs[k]
+            this.onDecouple(tab.id, g.groupName)
+        }
+
+        delete this.couplings[group.groupName]
+    },
+    coupleTabsWithGroup(group, tabs) {
+        this.couplings[group.groupName].tabs = tabs
+        for (let k in tabs) {
+            if (!tabs.hasOwnProperty(k)) {
+                continue;
+            }
+
+            const tabId = tabs[k]
+            this.onCouple(tabId, group.groupName)
+        }
+    },
+    decoupleTab(groupName, tabId) {
+        this.couplings[groupName].tabs = this.couplings[groupName].tabs.filter((e) => e !== tabId)
+        this.onDecouple(tabId, groupName)
+    },
+    getTabCouplings(tabId) {
+        let tabCouplings = [];
+        for (let k in this.couplings) {
+            if (!this.couplings.hasOwnProperty(k)) {
+                continue;
+            }
+
+            let coupling = this.couplings[k];
+            if (coupling.tabs.filter((t) => t === tabId).length > 0) {
+                tabCouplings.push(coupling)
+            }
+        }
+
+        return tabCouplings;
     }
 };
 
-const coupler = Object.create(Coupler)
+let coupler = null;
 
-function removeCouplesForTabAndItsCouples(tab) {
-    coupler.cleanCouplings(tab)
+function decoupleTabFromGroups(tabId) {
+    let tabCouplings = coupler.getTabCouplings(tabId);
+    for (let k in tabCouplings) {
+        if (!tabCouplings.hasOwnProperty(k)) {
+            continue;
+        }
+
+        coupler.decoupleTab(tabCouplings[k].group.groupName, tabId)
+    }
 }
 
-function findCouplesForTab(tab, allTabs, getConfig) {
-    // if tabId is marked to have no couple tabs, abort
-    if (coupler.isTabBlockedFromDetection(tab)) {
-        return [];
-    }
-
-    if (coupler.hasTabCoupledTabs(tab)) {
-        return coupler.getCouples(tab);
-    }
-    coupler.blockTabFromDetection(tab);
-
+function syncConfig(getConfig) {
     const config = getConfig();
     for (let k in config) {
         if (!config.hasOwnProperty(k)) {
             continue;
         }
 
-        const configEntry = config[k];
+        let configGroup = config[k];
+        coupler.addGroup(configGroup)
+    }
 
-        for (let r in configEntry.regExList) {
-            if (!configEntry.regExList.hasOwnProperty(r)) {
-                continue;
-            }
+    let couplings = coupler.getCouplings();
+    for (let k in couplings) {
+        if (!couplings.hasOwnProperty(k)) {
+            continue;
+        }
 
-            const regExEntry = configEntry.regExList[r];
+        let group = couplings[k];
 
-            if (urlMatchRegEx(tab.url, regExEntry.regEx)) {
-                findCoupledTabsForTabByUrlRegExList(tab, allTabs, configEntry.regExList);
-            }
+        if (config.filter((g) => g.groupName === group.groupName).length === 0) {
+            coupler.removeGroup(group)
         }
     }
-
-    if (coupler.hasTabCoupledTabs(tab)) {
-        return coupler.getCouples(tab);
-    }
-
-    return [];
 }
 
-function findCoupledTabsForTabByUrlRegExList(tab, allTabs, regExList) {
+function coupleTabsWithGroups(allTabs, getConfig) {
+    syncConfig(getConfig)
+
+    let couplings = coupler.getCouplings();
+    for (let k in couplings) {
+        if (!couplings.hasOwnProperty(k)) {
+            continue;
+        }
+
+        const coupling = couplings[k];
+
+        coupler.coupleTabsWithGroup(coupling.group, findCoupledTabsForTabByUrlRegExList(allTabs, coupling.group.regExList))
+    }
+}
+
+function findCoupledTabsForTabByUrlRegExList(allTabs, regExList) {
+    let matchingTabs = []
+
     for (let k in regExList) {
         if (!regExList.hasOwnProperty(k)) {
             continue;
         }
 
         const regExEntry = regExList[k];
-        findCoupledTabsForTabByUrlRegEx(tab, allTabs, regExEntry.regEx);
-    }
-}
-
-function findCoupledTabsForTabByUrlRegEx(tab, allTabs, urlRegEx) {
-    let coupledTabs = getMatchingTabsByUrlRegEx(allTabs, urlRegEx);
-    coupledTabs = removeTabIdFromCouples(tab, coupledTabs)
-
-    if (coupledTabs.length > 0) {
-        coupler.addCouplesForTab(tab, coupledTabs);
-    }
-}
-
-function removeTabIdFromCouples(tab, couples) {
-    for (let k in couples) {
-        if (!couples.hasOwnProperty(k)) {
-            continue;
-        }
-
-        if (couples[k] === tab.id) {
-            couples.splice(k, 1);
-        }
+        let m = getMatchingTabsByUrlRegEx(allTabs, regExEntry.regEx);
+        matchingTabs = matchingTabs.concat(m);
     }
 
-    return couples;
+    return matchingTabs;
 }
 
 function getMatchingTabsByUrlRegEx(tabs, urlRegEx) {
@@ -174,4 +189,8 @@ function isTabsIdInArray(tabId, tabIds) {
     }
 
     return false;
+}
+
+function initCoupling() {
+    coupler = Object.create(Coupler)
 }

@@ -28,7 +28,8 @@
       "js": [
         "content/dom.js",
         "content/eventCapturing.js",
-        "content/eventDispatching.js"
+        "content/eventDispatching.js",
+        "content/ui.js"
       ],
       "run_at": "document_end",
       "all_frames": true

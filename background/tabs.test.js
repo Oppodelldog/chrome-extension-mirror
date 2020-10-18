@@ -1,10 +1,12 @@
 const chrome = require("sinon-chrome");
-const sinon = require("sinon")
+const sinon = require("sinon");
 const rewire = require('rewire');
 let moduleUnderTest = null;
 let initTabs = null;
 let allTabs = null;
-let removeCouplesForTabAndItsCouples = null;
+let coupleTabsWithGroups = null;
+let loadConfigurationAsObject = null;
+let decoupleTabFromGroups = null;
 
 describe("tabs", () => {
     beforeEach(() => {
@@ -12,9 +14,12 @@ describe("tabs", () => {
         moduleUnderTest = rewire('./tabs.js');
         initTabs = moduleUnderTest.__get__('initTabs');
         allTabs = moduleUnderTest.__get__('allTabs');
-        removeCouplesForTabAndItsCouples = sinon.spy()
-        moduleUnderTest.__set__('removeCouplesForTabAndItsCouples', removeCouplesForTabAndItsCouples)
-
+        coupleTabsWithGroups = sinon.spy();
+        moduleUnderTest.__set__('coupleTabsWithGroups', coupleTabsWithGroups);
+        loadConfigurationAsObject = sinon.spy();
+        moduleUnderTest.__set__('loadConfigurationAsObject', loadConfigurationAsObject);
+        decoupleTabFromGroups = sinon.spy();
+        moduleUnderTest.__set__('decoupleTabFromGroups', decoupleTabFromGroups);
         initTabs(chrome)
     })
 
@@ -28,26 +33,19 @@ describe("tabs", () => {
     test('tab onUpdated - adds tab', () => {
         let tabStub = {id: 1};
 
-        // noinspection JSUnresolvedFunction
-        chrome.tabs.onUpdated.dispatch(1, {}, tabStub)
+        chrome.tabs.onUpdated.dispatch(tabStub.id, {status: "complete"}, tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
+
+        expect(coupleTabsWithGroups.calledOnce).toBeTruthy()
+        expect(coupleTabsWithGroups.args[0][0]).toEqual(allTabs)
+        expect(coupleTabsWithGroups.args[0][1]).toEqual(loadConfigurationAsObject)
     });
 
-    test('tab onUpdated - with status "complete" it calls removeCouplesForTabAndItsCouples', () => {
-        let tabStub = {id: 1};
 
-        // noinspection JSUnresolvedFunction
-        chrome.tabs.onUpdated.dispatch(1, {status: "complete"}, tabStub)
-
-        expect(removeCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
-        expect(removeCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
-    });
-
-    test('tab onActivated - resolves tab, adds it and calls removeCouplesForTabAndItsCouples', () => {
+    test('tab onActivated - resolves tab, adds it', () => {
         let tabActiveInfo = {tabId: 1}
 
-        // noinspection JSUnresolvedFunction
         chrome.tabs.onActivated.dispatch(tabActiveInfo)
 
         expect(chrome.tabs.get.calledOnce).toBeTruthy()
@@ -58,28 +56,28 @@ describe("tabs", () => {
         chrome.tabs.get.args[0][1](tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
-        expect(removeCouplesForTabAndItsCouples.calledOnce).toBeTruthy()
-        expect(removeCouplesForTabAndItsCouples.args[0][0]).toEqual(tabStub)
     })
 
     test('tab onCreated - adds tab', () => {
         let tabStub = {id: 1};
 
-        // noinspection JSUnresolvedFunction
         chrome.tabs.onCreated.dispatch(tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
     })
 
     test('tab onRemoved - removes tab', () => {
-        let tabStub = {id: 1};
+        let tabId = 1;
+        let tabStub = {id: tabId};
         allTabs[1] = tabStub;
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
 
-        // noinspection JSUnresolvedFunction
-        chrome.tabs.onRemoved.dispatch(tabStub)
+        chrome.tabs.onRemoved.dispatch(tabId)
 
         expect(allTabs[tabStub.id]).toBeUndefined();
+
+        expect(decoupleTabFromGroups.calledOnce).toBeTruthy();
+        expect(decoupleTabFromGroups.args[0][0]).toEqual(tabId);
     })
 })
