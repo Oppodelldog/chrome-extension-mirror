@@ -1,7 +1,9 @@
 function handleCouplingStatusChange(request) {
     let elem = document.createElement('div');
     elem.id = "mirror-extension-couplingIndicator"
-    const css = 'position:fixed;box-sizing: border-box;top:0;right:0;width:40px;height:40px;opacity:0.3;z-index:100;background-color:#00ff00;';
+    elem.innerHTML = "M"
+    elem.title = "This tab is mirrored by Mirror Extension"
+    const css = getIndicatorCss();
     const existingElem = document.getElementById(elem.id);
 
     if (existingElem !== null) {
@@ -19,4 +21,25 @@ function handleCouplingStatusChange(request) {
     if (request.value === "DECOUPLED") {
         elem.style.cssText = css + "display:none";
     }
+}
+
+function getIndicatorCss() {
+    return `
+    position:fixed;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    top:0;
+    right:0;
+    width:40px;
+    height:40px;
+    opacity:0.3;
+    z-index:100;
+    background-color:rgba(144, 199 ,255, 0.67);
+    font-size: 30px;
+    font-weight: bold;
+    font-family:monospace;
+    color:black;
+    `.replaceAll('\n', '');
 }
