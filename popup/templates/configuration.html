@@ -1,7 +1,7 @@
 <div class="configuration">
     <div class="title-line">
         <h1>{{vm.title}}</h1>
-        <button ng-click="vm.toggleEnabled()">{{vm.generalConfig.enabled}}</button>
+        <button ng-class="{ 'on' : vm.generalConfig.enabled }" ng-click="vm.toggleEnabled()"><span class="round"></span></button>
     </div>
     Test Url: <input ng-model="vm.testUrl" id="txt-test-url" type="text"/>
     <hr>
