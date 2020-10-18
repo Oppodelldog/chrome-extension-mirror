@@ -47,8 +47,8 @@ const Coupler = {
                 continue;
             }
 
-            const tab = g.tabs[k]
-            this.onDecouple(tab.id, g.groupName)
+            const tabId = g.tabs[k]
+            this.onDecouple(tabId, g.groupName)
         }
 
         delete this.couplings[group.groupName]
@@ -115,12 +115,17 @@ function syncConfig(getConfig) {
             continue;
         }
 
-        let group = couplings[k];
+        let group = couplings[k].group;
 
         if (config.filter((g) => g.groupName === group.groupName).length === 0) {
+            console.log("remove gropp", group)
             coupler.removeGroup(group)
         }
     }
+}
+
+function sync(){
+    coupleTabsWithGroups(allTabs,loadConfigurationAsObject)
 }
 
 function coupleTabsWithGroups(allTabs, getConfig) {

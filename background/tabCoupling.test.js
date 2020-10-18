@@ -1,12 +1,13 @@
 const rewire = require('rewire');
 const sinon = require('sinon');
+let code = null;
 let coupler = null;
 
 describe("tab couplings", () => {
     beforeEach(() => {
-        const code = rewire('./tabCoupling.js');
+        code = rewire('./tabCoupling.js');
         initCoupling = code.__get__('initCoupling');
-        coupleTabsWithGroups = code.__get__('coupleTabsWithGroups');
+        sync = code.__get__('sync');
 
         initCoupling();
         coupler = code.__get__('coupler');
@@ -15,7 +16,7 @@ describe("tab couplings", () => {
     })
 
     test('coupleTabsWithGroups', () => {
-        const loadConfiguration = function () {
+        const loadConfigurationAsObject = function () {
             return [
                 {
                     "regExList": [
@@ -30,7 +31,9 @@ describe("tab couplings", () => {
         let tab3 = {id: "c", url: "https://www.github.com/Oppodelldog/chrome-extension-mirror"};
         const allTabs = [tab1, tab2, tab3];
 
-        coupleTabsWithGroups(allTabs, loadConfiguration);
+        code.__set__("allTabs", allTabs)
+        code.__set__("loadConfigurationAsObject", loadConfigurationAsObject)
+        sync();
 
         const expectedCouplings = {
             'test-group': {
@@ -40,7 +43,7 @@ describe("tab couplings", () => {
         };
 
         expect(coupler.couplings).toEqual(expectedCouplings);
-        
+
         expect(coupler.onCouple.callCount).toEqual(2);
         expect(coupler.onCouple.args[0][0]).toEqual("1");
         expect(coupler.onCouple.args[1][0]).toEqual("c");

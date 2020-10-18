@@ -8,7 +8,7 @@ let allTabs = [];
 function addTab(tab) {
     allTabs[tab.id] = tab;
 
-    coupleTabsWithGroups(allTabs, loadConfigurationAsObject);
+    sync();
 }
 
 function delTab(tabId) {
