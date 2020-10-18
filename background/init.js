@@ -1,29 +1,54 @@
-initTabs(chrome)
+function initCoupleEvents() {
+    coupler.onDecouple = ((tabId, groupName) => {
+        try {
+            chrome.tabs.sendMessage(tabId, {
+                type: "COUPLING_STATUS_CHANGE",
+                value: "DECOUPLED",
+                groupName: groupName,
+            });
+
+        } catch (e) {
+            console.error("could not send DECOUPLED message to tab:", tabId)
+            console.error(e)
+        }
+    })
+
+    coupler.onCouple = ((tabId, groupName) => {
+        try {
+            chrome.tabs.sendMessage(tabId, {
+                type: "COUPLING_STATUS_CHANGE",
+                value: "COUPLED",
+                groupName: groupName,
+            });
+        } catch (e) {
+            console.error("could not send COUPLED message to tab:", tabId)
+            console.error(e)
+        }
+    })
+}
+
+function enableExtension() {
+    try {
+        addEventListeners();
+        sync();
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+function disableExtension() {
+    try {
+        removeListeners(chrome);
+        coupler.clear();
+    } catch (e) {
+        console.error(e)
+    }
+}
+
 initCoupling()
+initCoupleEvents()
 
-coupler.onDecouple = ((tabId, groupName) => {
-    try {
-        chrome.tabs.sendMessage(tabId, {
-            type: "COUPLING_STATUS_CHANGE",
-            value: "DECOUPLED",
-            groupName: groupName,
-        });
-
-    } catch (e) {
-        console.error("could not send DECOUPLED message to tab:", tabId)
-        console.error(e)
-    }
-})
-
-coupler.onCouple = ((tabId, groupName) => {
-    try {
-        chrome.tabs.sendMessage(tabId, {
-            type: "COUPLING_STATUS_CHANGE",
-            value: "COUPLED",
-            groupName: groupName,
-        });
-    } catch (e) {
-        console.error("could not send COUPLED message to tab:", tabId)
-        console.error(e)
-    }
-})
+let generalConfig = loadGeneralConfigAsObject();
+if (generalConfig.enabled) {
+    enableExtension();
+}

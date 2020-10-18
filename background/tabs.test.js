@@ -2,7 +2,7 @@ const chrome = require("sinon-chrome");
 const sinon = require("sinon");
 const rewire = require('rewire');
 let moduleUnderTest = null;
-let initTabs = null;
+let addEventListeners = null;
 let allTabs = null;
 let coupleTabsWithGroups = null;
 let loadConfigurationAsObject = null;
@@ -13,7 +13,7 @@ describe("tabs", () => {
     beforeEach(() => {
         chrome.flush();
         moduleUnderTest = rewire('./tabs.js');
-        initTabs = moduleUnderTest.__get__('initTabs');
+        addEventListeners = moduleUnderTest.__get__('addEventListeners');
         allTabs = moduleUnderTest.__get__('allTabs');
         coupleTabsWithGroups = sinon.spy();
         moduleUnderTest.__set__('coupleTabsWithGroups', coupleTabsWithGroups);
@@ -23,10 +23,11 @@ describe("tabs", () => {
         moduleUnderTest.__set__('decoupleTabFromGroups', decoupleTabFromGroups);
         sync = sinon.spy();
         moduleUnderTest.__set__('sync', sync);
-        initTabs(chrome)
+        moduleUnderTest.__set__('chrome', chrome);
+        addEventListeners()
     })
 
-    test('initTabs', () => {
+    test('addEventListeners', () => {
         expect(chrome.tabs.onUpdated.addListener.calledOnce).toBeTruthy();
         expect(chrome.tabs.onActivated.addListener.calledOnce).toBeTruthy();
         expect(chrome.tabs.onCreated.addListener.calledOnce).toBeTruthy();

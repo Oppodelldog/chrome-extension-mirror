@@ -2,6 +2,7 @@ const controller = angular.module('app').controller("ConfigurationController", f
     const vm = this;
     vm.testUrl = "";
     vm.title = 'Configuration';
+    const backgroundPage = chrome.extension.getBackgroundPage();
 
     this.prependRegExEntryToList = function (list) {
         list.unshift({regEx: ""});
@@ -10,29 +11,40 @@ const controller = angular.module('app').controller("ConfigurationController", f
         list.splice(index, 1);
     }
     this.removeConfigurationEntry = function (index) {
-        vm.configuration.splice(index, 1);
+        vm.couplings.splice(index, 1);
     }
     this.prependConfigurationEntry = function () {
-        vm.configuration.unshift({regExList: []})
+        vm.couplings.unshift({regExList: []})
     }
     this.testUrlAgainstRegEx = function (regEx) {
         const regularExpression = new RegExp(regEx);
         return (regularExpression.exec(vm.testUrl) != null);
     }
     this.loadConfiguration = function () {
-        vm.configuration = angular.fromJson(chrome.extension.getBackgroundPage().loadConfiguration());
-        if (typeof vm.configuration === "undefined") {
-            this.prepareInitialConfiguration();
+        vm.generalConfig = angular.fromJson(chrome.extension.getBackgroundPage().loadGeneralConfig());
+        vm.couplings = angular.fromJson(chrome.extension.getBackgroundPage().loadCouplings());
+        if (typeof vm.couplings === "undefined") {
+            this.initCouplings();
         }
     };
-    this.prepareInitialConfiguration = function () {
-        vm.configuration = [];
+
+    this.initCouplings = function () {
+        vm.couplings = [];
     }
 
     this.saveConfiguration = function () {
-        let backgroundPage = chrome.extension.getBackgroundPage();
-        backgroundPage.saveConfiguration(angular.toJson(vm.configuration));
+        backgroundPage.saveCouplings(angular.toJson(vm.couplings));
         backgroundPage.sync();
+    }
+
+    this.toggleEnabled = function () {
+        vm.generalConfig.enabled = !vm.generalConfig.enabled;
+        backgroundPage.saveGeneralConfig(angular.toJson(vm.generalConfig));
+        if (vm.generalConfig.enabled) {
+            backgroundPage.enableExtension()
+        } else {
+            backgroundPage.disableExtension()
+        }
     }
 
     this.loadConfiguration();

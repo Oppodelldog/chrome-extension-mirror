@@ -59,3 +59,8 @@ li.configuration-entries{
 	border-bottom:1px solid grey;
 	padding-bottom:20px;
 }
+
+.title-line{
+	display:flex;
+	justify-content: space-between;
+}

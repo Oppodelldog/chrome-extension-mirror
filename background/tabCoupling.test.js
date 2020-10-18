@@ -16,8 +16,8 @@ describe("tab couplings", () => {
         coupler.onDecouple = sinon.spy();
     })
 
-    test('coupleTabsWithGroups', () => {
-        const loadConfigurationAsObject = function () {
+    test('sync', () => {
+        const loadCouplingsAsObject = function () {
             return [
                 {
                     "regExList": [
@@ -27,13 +27,18 @@ describe("tab couplings", () => {
                 }
             ]
         };
+        const loadGeneralConfigAsObject = function () {
+            return {enabled: true}
+        };
         let tab1 = {id: "1", url: "http://www.github.com"};
         let tab2 = {id: "b", url: "http://www.gitlab.com"};
         let tab3 = {id: "c", url: "https://www.github.com/Oppodelldog/chrome-extension-mirror"};
         const allTabs = [tab1, tab2, tab3];
 
         code.__set__("allTabs", allTabs)
-        code.__set__("loadConfigurationAsObject", loadConfigurationAsObject)
+        code.__set__("loadCouplingsAsObject", loadCouplingsAsObject)
+        code.__set__("loadGeneralConfigAsObject", loadGeneralConfigAsObject)
+
         sync();
 
         const expectedCouplings = {

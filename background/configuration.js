@@ -1,11 +1,29 @@
-function saveConfiguration(config) {
-    localStorage["coupling"] = config;
+function saveCouplings(couplings) {
+    localStorage["coupling"] = couplings;
 }
 
-function loadConfiguration() {
+function loadCouplings() {
     return localStorage["coupling"];
 }
 
-function loadConfigurationAsObject() {
-    return JSON.parse(loadConfiguration())
+function loadCouplingsAsObject() {
+    return JSON.parse(loadCouplings())
 }
+
+function saveGeneralConfig(generalConfig) {
+    localStorage["general"] = generalConfig;
+}
+
+function loadGeneralConfig() {
+    let config = localStorage["general"];
+    if (typeof config === "undefined" || config === null) {
+        return {"enabled": true}
+    }
+
+    return config;
+}
+
+function loadGeneralConfigAsObject() {
+    return JSON.parse(loadGeneralConfig())
+}
+
