@@ -7,6 +7,15 @@ const Coupler = {
     },
     onCouple: (tabId, groupName) => {
     },
+    clear() {
+        for (let k in this.couplings) {
+            if (!this.couplings.hasOwnProperty(k)) {
+                continue;
+            }
+            const coupling = this.couplings[k];
+            this.removeGroup(coupling.group);
+        }
+    },
     hasTabCoupledTabs(tabId) {
         return this.getCoupledTabs(tabId).length > 0;
     },
@@ -99,11 +108,11 @@ function decoupleTabFromGroups(tabId) {
 }
 
 function sync() {
-    coupleTabsWithGroups(allTabs, loadConfigurationAsObject)
-}
+    if (!loadGeneralConfigAsObject().enabled) {
+        return
+    }
 
-function coupleTabsWithGroups(allTabs, getConfig) {
-    syncConfig(getConfig)
+    syncConfig(loadCouplingsAsObject)
 
     let couplings = coupler.getCouplings();
     for (let k in couplings) {

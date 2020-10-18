@@ -1,21 +1,29 @@
 <div class="configuration">
-    <h1>{{vm.title}}</h1>
+    <div class="title-line">
+        <h1>{{vm.title}}</h1>
+        <button ng-class="{ 'on' : vm.generalConfig.enabled }" ng-click="vm.toggleEnabled()"><span class="round"></span></button>
+    </div>
     Test Url: <input ng-model="vm.testUrl" id="txt-test-url" type="text"/>
     <hr>
     <button ng-click="vm.saveConfiguration()">Save</button>
     <button ng-click="vm.prependConfigurationEntry()">Add Mirror Group</button>
     <ul>
-    <li class="configuration-entries" ng-repeat="(ck,configurationEntry) in vm.configuration">
-    Group:&nbsp;<input type="text" ng-model="configurationEntry.groupName"/>
-    <button ng-click="vm.removeConfigurationEntry(ck)">-</button>
-    <ul>
-    <li><button title="Add Regular Expression" ng-click="vm.prependRegExEntryToList(configurationEntry.regExList)">+</button></li>
-    <li class="regex-entries" ng-repeat="(key,regExEntry) in configurationEntry.regExList track by $index" >
-      <input type="text" ng-model="regExEntry.regEx"/>
-      <button ng-click="vm.removeRegExEntryFromList(configurationEntry.regExList,key)">-</button>
-      <span ng-if="vm.testUrl!=''" ng-class="vm.testUrlAgainstRegEx(regExEntry.regEx) ? 'pass' : 'fail'"></span>
-     </li>
-     </ul>
-    </li>
+        <li class="configuration-entries" ng-repeat="(ck,configurationEntry) in vm.couplings">
+            Group:&nbsp;<input type="text" ng-model="configurationEntry.groupName"/>
+            <button ng-click="vm.removeConfigurationEntry(ck)">-</button>
+            <ul>
+                <li>
+                    <button title="Add Regular Expression"
+                            ng-click="vm.prependRegExEntryToList(configurationEntry.regExList)">+
+                    </button>
+                </li>
+                <li class="regex-entries" ng-repeat="(key,regExEntry) in configurationEntry.regExList track by $index">
+                    <input type="text" ng-model="regExEntry.regEx"/>
+                    <button ng-click="vm.removeRegExEntryFromList(configurationEntry.regExList,key)">-</button>
+                    <span ng-if="vm.testUrl!=''"
+                          ng-class="vm.testUrlAgainstRegEx(regExEntry.regEx) ? 'pass' : 'fail'"></span>
+                </li>
+            </ul>
+        </li>
     </ul>
 </div>

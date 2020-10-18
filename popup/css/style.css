@@ -1,38 +1,43 @@
-ul.navigation{
-	font-size: 140%;
-	display:table-row;
-}
-ul.navigation li{
-	display:table-cell;
-}
-ul.navigation li+li{
-	padding-left:20px;
+ul.navigation {
+    font-size: 140%;
+    display: table-row;
 }
 
-.overview,.configuration{
-	width:600px;
+ul.navigation li {
+    display: table-cell;
 }
 
-li + ul{
-	margin-top:20px;
-}
-li{
-	margin-top:20px;
+ul.navigation li + li {
+    padding-left: 20px;
 }
 
-ul li ul li{
-	margin-top:10px;	
+.overview, .configuration {
+    width: 600px;
 }
 
-.pass,.fail{
-	font-size:160%;
-	width:16px;
-	height:16px;
+li + ul {
+    margin-top: 20px;
 }
-.pass:before{
-	content:  "\2714";
-	color:green;
+
+li {
+    margin-top: 20px;
 }
+
+ul li ul li {
+    margin-top: 10px;
+}
+
+.pass, .fail {
+    font-size: 160%;
+    width: 16px;
+    height: 16px;
+}
+
+.pass:before {
+    content: "\2714";
+    color: green;
+}
+
 /*
 .fail:before{
 	content: "\26A0";
@@ -40,22 +45,58 @@ ul li ul li{
 }
 */
 
-#txt-test-url{
-	width:100%;
+#txt-test-url {
+    width: 100%;
 }
 
-.configuration-entries > input{
-	width:300px
-}
-.regex-entries input{
-	width:260px;
+.configuration-entries > input {
+    width: 300px
 }
 
-.configuration > ul{
-	padding-left:0;
+.regex-entries input {
+    width: 260px;
 }
 
-li.configuration-entries{
-	border-bottom:1px solid grey;
-	padding-bottom:20px;
+.configuration > ul {
+    padding-left: 0;
+}
+
+li.configuration-entries {
+    border-bottom: 1px solid grey;
+    padding-bottom: 20px;
+}
+
+.title-line {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-line button {
+    border-radius: 100px;
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background-color: aliceblue;
+    border-color: #0d2c44;
+    border-width: 1px;
+    outline: none;
+}
+
+.round {
+    position: absolute;
+    top: 3px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 100px;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #144b76;
+}
+
+.on .round {
+    right: 6px;
+    background-color: #3294f1;
+
 }

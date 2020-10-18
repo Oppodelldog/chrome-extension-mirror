@@ -16,33 +16,43 @@ function delTab(tabId) {
     decoupleTabFromGroups(tabId)
 }
 
-function addOnTabUpdatedListener(chrome) {
-    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-        if (changeInfo.status === "complete") {
-            addTab(tab);
+function onUpdateTab(tabId, changeInfo, tab) {
+    if (changeInfo.status === "complete") {
+        addTab(tab);
+    }
+}
+
+function onActivateTab(evt) {
+    chrome.tabs.get(evt.tabId, function (tab) {
+        addTab(tab);
+    });
+}
+
+const listeners = {
+    "onUpdated": onUpdateTab,
+    "onActivated": onActivateTab,
+    "onRemoved": delTab,
+    "onCreated": addTab,
+}
+
+function addEventListeners() {
+    for (let eventName in listeners) {
+        if (!listeners.hasOwnProperty(eventName)) {
+            continue
         }
-    });
+
+        const listener = listeners[eventName];
+        chrome.tabs[eventName].addListener(listener);
+    }
 }
 
-function addOnTabActivatedListener(chrome) {
-    chrome.tabs.onActivated.addListener(function (evt) {
-        chrome.tabs.get(evt.tabId, function (tab) {
-            addTab(tab);
-        });
-    });
-}
+function removeListeners() {
+    for (let eventName in listeners) {
+        if (!listeners.hasOwnProperty(eventName)) {
+            continue
+        }
 
-function addOnTabRemovedListener(chrome) {
-    chrome.tabs.onRemoved.addListener(delTab);
-}
-
-function addOnTabCreatedListener(chrome) {
-    chrome.tabs.onCreated.addListener(addTab);
-}
-
-function initTabs(chrome) {
-    addOnTabUpdatedListener(chrome);
-    addOnTabActivatedListener(chrome);
-    addOnTabCreatedListener(chrome);
-    addOnTabRemovedListener(chrome);
+        const listener = listeners[eventName];
+        chrome.tabs[eventName].removeListener(listener)
+    }
 }
