@@ -1,5 +1,5 @@
 /**
- Coupler couples tabs that match the same mirror group.
+ Coupler couples tabs with mirror groups.
  */
 const Coupler = {
     couplings: {},
@@ -98,6 +98,26 @@ function decoupleTabFromGroups(tabId) {
     }
 }
 
+function sync() {
+    coupleTabsWithGroups(allTabs, loadConfigurationAsObject)
+}
+
+function coupleTabsWithGroups(allTabs, getConfig) {
+    syncConfig(getConfig)
+
+    let couplings = coupler.getCouplings();
+    for (let k in couplings) {
+        if (!couplings.hasOwnProperty(k)) {
+            continue;
+        }
+
+        const coupling = couplings[k];
+
+        coupler.coupleTabsWithGroup(coupling.group, findCoupledTabsForTabByUrlRegExList(allTabs, coupling.group.regExList))
+    }
+}
+
+
 function syncConfig(getConfig) {
     const config = getConfig();
     for (let k in config) {
@@ -120,25 +140,6 @@ function syncConfig(getConfig) {
         if (config.filter((g) => g.groupName === group.groupName).length === 0) {
             coupler.removeGroup(group)
         }
-    }
-}
-
-function sync(){
-    coupleTabsWithGroups(allTabs,loadConfigurationAsObject)
-}
-
-function coupleTabsWithGroups(allTabs, getConfig) {
-    syncConfig(getConfig)
-
-    let couplings = coupler.getCouplings();
-    for (let k in couplings) {
-        if (!couplings.hasOwnProperty(k)) {
-            continue;
-        }
-
-        const coupling = couplings[k];
-
-        coupler.coupleTabsWithGroup(coupling.group, findCoupledTabsForTabByUrlRegExList(allTabs, coupling.group.regExList))
     }
 }
 
