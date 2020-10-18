@@ -118,7 +118,6 @@ function syncConfig(getConfig) {
         let group = couplings[k].group;
 
         if (config.filter((g) => g.groupName === group.groupName).length === 0) {
-            console.log("remove gropp", group)
             coupler.removeGroup(group)
         }
     }
