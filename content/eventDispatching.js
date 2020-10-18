@@ -1,12 +1,14 @@
 const debugEvents = false;
 const debugElementPathIssues = false;
 
-function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse) {
+function receiveEventBroadcastFromBackgroundScript(request) {
     if (debugEvents === true && request.event === "change") {
         console.log(request)
     }
 
-    if (request.elementPath !== "") {
+    if (request.type === "COUPLING_STATUS_CHANGE") {
+        handleCouplingStatusChange(request);
+    } else if (request.elementPath !== "") {
         const element = DomUtil.findElementByPath(request.elementPath);
         if (element === null) {
             if (debugElementPathIssues) {
@@ -16,13 +18,13 @@ function receiveEventBroadcastFromBackgroundScript(request, sender, sendResponse
         }
         dispatchDomElementEvent(request, element);
     } else {
-        dispatchNonDomElementEvent(request, sendResponse);
+        dispatchNonDomElementEvent(request);
     }
 }
 
 chrome.runtime.onMessage.addListener(receiveEventBroadcastFromBackgroundScript);
 
-function dispatchNonDomElementEvent(request, sendResponse) {
+function dispatchNonDomElementEvent(request) {
     switch (request.event) {
         case 'scroll':
             dispatchScrollEvent(window, request);

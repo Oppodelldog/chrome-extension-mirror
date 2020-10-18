@@ -1,155 +1,161 @@
-/*
-    *************************
-	* First scratch version *
-	*************************
-
-	Methods here will find matching coupled tabs for the given tabId and tabUrl.
-
-	basically the following structure will be build:
-	tabCouples[tabId]=[coupledTabsIds...]
-
-	this will help the event broadcaster to find the tabs for event broadcasting.
-*/
-const tabCouples = [];
-
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status === "complete") {
-        refreshCouplesForTabAndItsCouples(tab);
-    }
-});
-
-chrome.tabs.onActivated.addListener(function (evt) {
-    chrome.tabs.get(evt.tabId, function (tab) {
-        refreshCouplesForTabAndItsCouples(tab);
-    });
-});
-
-function refreshCouplesForTabAndItsCouples(tab) {
-    if (typeof tabCouples[tab.id] !== "undefined") {
-        const couples = tabCouples[tab.id];
-        for (let k in couples) {
-            if (!couples.hasOwnProperty(k)) {
+/**
+ Coupler couples tabs with mirror groups.
+ */
+const Coupler = {
+    couplings: {},
+    onDecouple: (tabId, groupName) => {
+    },
+    onCouple: (tabId, groupName) => {
+    },
+    hasTabCoupledTabs(tabId) {
+        return this.getCoupledTabs(tabId).length > 0;
+    },
+    getCouplings() {
+        return this.couplings;
+    },
+    getCoupledTabs(tabId) {
+        let coupledTabs = [];
+        const tabGroups = this.getTabCouplings(tabId)
+        for (let k in tabGroups) {
+            if (!tabGroups.hasOwnProperty(k)) {
                 continue;
             }
 
-            const coupledTabId = couples[k];
-            removeCouplesForTab({id: coupledTabId});
+            const group = tabGroups[k]
+            if (group.tabs.filter((e) => e === tabId).length > 0) {
+                coupledTabs = coupledTabs.concat(group.tabs.filter((e) => e !== tabId))
+            }
         }
-    }
-    removeCouplesForTab(tab);
 
+        return coupledTabs;
+    },
+    addGroup(group) {
+        if (typeof this.couplings[group.groupName] === "undefined") {
+            this.couplings[group.groupName] = {
+                group: group,
+                tabs: []
+            }
+        }
+    },
+    removeGroup(group) {
+        const g = this.couplings[group.groupName];
+        if (typeof g === "undefined") {
+            return;
+        }
+        for (let k in g.tabs) {
+            if (!g.tabs.hasOwnProperty(k)) {
+                continue;
+            }
+
+            const tabId = g.tabs[k]
+            this.onDecouple(tabId, g.groupName)
+        }
+
+        delete this.couplings[group.groupName]
+    },
+    coupleTabsWithGroup(group, tabs) {
+        this.couplings[group.groupName].tabs = tabs
+        for (let k in tabs) {
+            if (!tabs.hasOwnProperty(k)) {
+                continue;
+            }
+
+            const tabId = tabs[k]
+            this.onCouple(tabId, group.groupName)
+        }
+    },
+    decoupleTab(groupName, tabId) {
+        this.couplings[groupName].tabs = this.couplings[groupName].tabs.filter((e) => e !== tabId)
+        this.onDecouple(tabId, groupName)
+    },
+    getTabCouplings(tabId) {
+        let tabCouplings = [];
+        for (let k in this.couplings) {
+            if (!this.couplings.hasOwnProperty(k)) {
+                continue;
+            }
+
+            let coupling = this.couplings[k];
+            if (coupling.tabs.filter((t) => t === tabId).length > 0) {
+                tabCouplings.push(coupling)
+            }
+        }
+
+        return tabCouplings;
+    }
+};
+
+let coupler = null;
+
+function decoupleTabFromGroups(tabId) {
+    let tabCouplings = coupler.getTabCouplings(tabId);
+    for (let k in tabCouplings) {
+        if (!tabCouplings.hasOwnProperty(k)) {
+            continue;
+        }
+
+        coupler.decoupleTab(tabCouplings[k].group.groupName, tabId)
+    }
 }
 
-function findCouplesForTab(tab) {
+function sync() {
+    coupleTabsWithGroups(allTabs, loadConfigurationAsObject)
+}
 
-    // if tabId is marked to have no couple tabs, abort
-    if (isTabBlockedFromDetection(tab)) {
-        //console.error("url not coupled " + tab.url);
-        return null;
+function coupleTabsWithGroups(allTabs, getConfig) {
+    syncConfig(getConfig)
+
+    let couplings = coupler.getCouplings();
+    for (let k in couplings) {
+        if (!couplings.hasOwnProperty(k)) {
+            continue;
+        }
+
+        const coupling = couplings[k];
+
+        coupler.coupleTabsWithGroup(coupling.group, findCoupledTabsForTabByUrlRegExList(allTabs, coupling.group.regExList))
     }
+}
 
-    if (hasTabCoupledTabs(tab)) {
-        //console.info("found tabCouples in cache " + tab.id);
-        //console.log(tabCouples[tabId]);
-        return tabCouples[tab.id];
-    }
-
-    blockTabFromDetection(tab);
-    const config = JSON.parse(loadConfiguration());
+function syncConfig(getConfig) {
+    const config = getConfig();
     for (let k in config) {
         if (!config.hasOwnProperty(k)) {
             continue;
         }
 
-        const configEntry = config[k];
+        let configGroup = config[k];
+        coupler.addGroup(configGroup)
+    }
 
-        for (let r in configEntry.regExList) {
-            if (!configEntry.regExList.hasOwnProperty(r)) {
-                continue;
-            }
+    let couplings = coupler.getCouplings();
+    for (let k in couplings) {
+        if (!couplings.hasOwnProperty(k)) {
+            continue;
+        }
 
-            const regExEntry = configEntry.regExList[r];
+        let group = couplings[k].group;
 
-            if (urlMatchRegEx(tab.url, regExEntry.regEx)) {
-                findCoupledTabsForTabByUrlRegExList(tab, configEntry.regExList);
-            }
+        if (config.filter((g) => g.groupName === group.groupName).length === 0) {
+            coupler.removeGroup(group)
         }
     }
-    return null;
 }
 
-function findCoupledTabsForTabByUrlRegExList(tab, regExList) {
+function findCoupledTabsForTabByUrlRegExList(allTabs, regExList) {
+    let matchingTabs = []
+
     for (let k in regExList) {
         if (!regExList.hasOwnProperty(k)) {
             continue;
         }
 
         const regExEntry = regExList[k];
-        findCoupledTabsForTabByUrlRegEx(tab, regExEntry.regEx);
-    }
-}
-
-function hasTabCoupledTabs(tab) {
-    return (typeof tabCouples[tab.id] !== "undefined");
-}
-
-function isTabBlockedFromDetection(tab) {
-    return (tabCouples[tab.id] === 0);
-}
-
-function blockTabFromDetection(tab) {
-    tabCouples[tab.id] = 0;
-}
-
-function removeCouplesForTab(tab) {
-    delete tabCouples[tab.id];
-}
-
-function addCouplesForTab(tab, couples) {
-    if (typeof tabCouples[tab.id] !== "undefined") {
-        if (isTabBlockedFromDetection(tab)) {
-            tabCouples[tab.id] = [];
-        }
-        for (let k in couples) {
-            if (!couples.hasOwnProperty(k)) {
-                continue;
-            }
-
-            tabCouples[tab.id][k] = couples[k];
-        }
-    } else {
-        tabCouples[tab.id] = couples;
-    }
-}
-
-function findCoupledTabsForTabByUrlRegEx(tab, urlRegEx) {
-    console.debug("find tabCouples for tab " + tab.id + " url " + tab.url + " using regEx " + urlRegEx);
-    chrome.tabs.query({}, function (allTabs) {
-        let coupledTabs = getMatchingTabsByUrlRegEx(allTabs, urlRegEx);
-        coupledTabs = removeTabIdFromCouples(tab, coupledTabs)
-
-        if (coupledTabs.length > 0) {
-            addCouplesForTab(tab, coupledTabs);
-            console.log("found tabs for url " + tab.url);
-            console.log(tabCouples)
-        } else {
-            console.log("found nothing");
-        }
-    });
-}
-
-function removeTabIdFromCouples(tab, couples) {
-    for (let k in couples) {
-        if (!couples.hasOwnProperty(k)) {
-            continue;
-        }
-
-        if (couples[k] === tab.id) {
-            couples.splice(k, 1);
-        }
+        let m = getMatchingTabsByUrlRegEx(allTabs, regExEntry.regEx);
+        matchingTabs = matchingTabs.concat(m);
     }
 
-    return couples;
+    return matchingTabs;
 }
 
 function getMatchingTabsByUrlRegEx(tabs, urlRegEx) {
@@ -161,7 +167,7 @@ function getMatchingTabsByUrlRegEx(tabs, urlRegEx) {
 
         const tab = tabs[k];
         if (urlMatchRegEx(tab.url, urlRegEx)) {
-            matchingTabs[tab.id] = tab.id;
+            matchingTabs.push(tab.id);
         }
     }
 
@@ -187,4 +193,8 @@ function isTabsIdInArray(tabId, tabIds) {
     }
 
     return false;
+}
+
+function initCoupling() {
+    coupler = Object.create(Coupler)
 }

@@ -30,12 +30,14 @@ const controller = angular.module('app').controller("ConfigurationController", f
     }
 
     this.saveConfiguration = function () {
-        chrome.extension.getBackgroundPage().saveConfiguration(angular.toJson(vm.configuration));
+        let backgroundPage = chrome.extension.getBackgroundPage();
+        backgroundPage.saveConfiguration(angular.toJson(vm.configuration));
+        backgroundPage.sync();
     }
 
     this.loadConfiguration();
 });
 
-document.addEventListener("unload", function(e){
-	alert("CLOSED");
+document.addEventListener("unload", function (e) {
+    alert("CLOSED");
 }, true);

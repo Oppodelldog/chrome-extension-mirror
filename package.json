@@ -5,5 +5,12 @@
   "main": "popup/index.html",
   "repository": "https://github.com/Oppodelldog/chrome-extension-mirror.git",
   "author": "Oppodelldog <odog@netcologne.de>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@jest/globals": "^26.5.3",
+    "jest": "^26.0.1",
+    "rewire": "^5.0.0",
+    "sinon": "^9.2.0",
+    "sinon-chrome": "^3.0.1"
+  }
 }

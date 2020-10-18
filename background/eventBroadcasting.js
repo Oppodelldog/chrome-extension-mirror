@@ -26,19 +26,22 @@ function withActiveTab(f) {
 }
 
 function eachConnectedTab(activeTab, f) {
-    const coupledTabs = findCouplesForTab(activeTab);
-    chrome.tabs.query({}, function (allTabs) {
-        for (let k in allTabs) {
-            if (!allTabs.hasOwnProperty(k)) {
-                continue;
-            }
+    if (!coupler.hasTabCoupledTabs(activeTab.id)) {
+        return
+    }
 
-            const tab = allTabs[k];
-            if (tab.id !== activeTab.id) {
-                if (isTabsIdInArray(tab.id, coupledTabs)) {
-                    f(tab)
-                }
+    const coupledTabs = coupler.getCoupledTabs(activeTab.id)
+
+    for (let k in allTabs) {
+        if (!allTabs.hasOwnProperty(k)) {
+            continue;
+        }
+
+        const tab = allTabs[k];
+        if (tab.id !== activeTab.id) {
+            if (isTabsIdInArray(tab.id, coupledTabs)) {
+                f(tab)
             }
         }
-    })
+    }
 }

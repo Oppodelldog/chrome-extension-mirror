@@ -11,9 +11,11 @@
   ],
   "background": {
     "scripts": [
+      "background/tabs.js",
       "background/eventBroadcasting.js",
       "background/tabCoupling.js",
-      "background/configuration.js"
+      "background/configuration.js",
+      "background/init.js"
     ],
     "persistent": false
   },
@@ -26,7 +28,8 @@
       "js": [
         "content/dom.js",
         "content/eventCapturing.js",
-        "content/eventDispatching.js"
+        "content/eventDispatching.js",
+        "content/ui.js"
       ],
       "run_at": "document_end",
       "all_frames": true
