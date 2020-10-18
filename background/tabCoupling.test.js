@@ -2,6 +2,7 @@ const rewire = require('rewire');
 const sinon = require('sinon');
 let code = null;
 let coupler = null;
+let sync = null;
 
 describe("tab couplings", () => {
     beforeEach(() => {

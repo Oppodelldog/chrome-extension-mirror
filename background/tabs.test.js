@@ -7,6 +7,7 @@ let allTabs = null;
 let coupleTabsWithGroups = null;
 let loadConfigurationAsObject = null;
 let decoupleTabFromGroups = null;
+let sync = null;
 
 describe("tabs", () => {
     beforeEach(() => {
@@ -20,6 +21,8 @@ describe("tabs", () => {
         moduleUnderTest.__set__('loadConfigurationAsObject', loadConfigurationAsObject);
         decoupleTabFromGroups = sinon.spy();
         moduleUnderTest.__set__('decoupleTabFromGroups', decoupleTabFromGroups);
+        sync = sinon.spy();
+        moduleUnderTest.__set__('sync', sync);
         initTabs(chrome)
     })
 
@@ -37,9 +40,7 @@ describe("tabs", () => {
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
 
-        expect(coupleTabsWithGroups.calledOnce).toBeTruthy()
-        expect(coupleTabsWithGroups.args[0][0]).toEqual(allTabs)
-        expect(coupleTabsWithGroups.args[0][1]).toEqual(loadConfigurationAsObject)
+        expect(sync.calledOnce).toBeTruthy();
     });
 
 
@@ -56,6 +57,7 @@ describe("tabs", () => {
         chrome.tabs.get.args[0][1](tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
+        expect(sync.calledOnce).toBeTruthy();
     })
 
     test('tab onCreated - adds tab', () => {
@@ -64,6 +66,7 @@ describe("tabs", () => {
         chrome.tabs.onCreated.dispatch(tabStub)
 
         expect(allTabs[tabStub.id]).toStrictEqual(tabStub);
+        expect(sync.calledOnce).toBeTruthy();
     })
 
     test('tab onRemoved - removes tab', () => {
