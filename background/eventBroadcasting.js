@@ -1,18 +1,14 @@
-function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
+function receiveEventBroadcastFromContentScript(msg, sender) {
     withActiveTabId((activeTabId) => {
         if (activeTabId === sender.tab.id) {
-            broadcastEventToCoupledTabsContentScripts(request);
+            broadcastEventToCoupledTabsContentScripts(activeTabId, msg);
         }
     });
 }
 
-chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
-
-function broadcastEventToCoupledTabsContentScripts(msg) {
-    withActiveTabId((activeTabId) => {
-        eachConnectedTabId(activeTabId, (connectedTabId) => {
-            chrome.tabs.sendMessage(connectedTabId, msg);
-        });
+function broadcastEventToCoupledTabsContentScripts(activeTabId, msg) {
+    eachCoupledTabId(activeTabId, (connectedTabId) => {
+        chrome.tabs.sendMessage(connectedTabId, msg);
     });
 }
 
@@ -25,7 +21,7 @@ function withActiveTabId(f) {
     });
 }
 
-function eachConnectedTabId(activeTabId, f) {
+function eachCoupledTabId(activeTabId, f) {
     if (!coupler.hasTabCoupledTabs(activeTabId)) {
         return
     }
@@ -42,4 +38,8 @@ function eachConnectedTabId(activeTabId, f) {
             f(tabId)
         }
     }
+}
+
+function initContentScriptEventListener() {
+    chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 }

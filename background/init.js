@@ -45,6 +45,7 @@ function disableExtension() {
     }
 }
 
+initContentScriptEventListener()
 initCoupling()
 initCoupleEvents()
 
