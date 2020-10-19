@@ -17,7 +17,7 @@ function saveGeneralConfig(generalConfig) {
 function loadGeneralConfig() {
     let config = localStorage["general"];
     if (typeof config === "undefined" || config === null) {
-        return {"enabled": true}
+        return `{"enabled": true}`
     }
 
     return config;
