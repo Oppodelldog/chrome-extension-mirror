@@ -37,46 +37,48 @@ function broadcastScrollEvent(event) {
     broadCastToBackgroundScript({
         elementPath: DomUtil.getDomPath(el),
         event: 'scroll',
-        scrollY: (isDocument) ? this.scrollY : el.scrollTop,
-        scrollX: (isDocument) ? this.scrollX : el.scrollLeft
+        scrollY: (isDocument) ? window.scrollY : el.scrollTop,
+        scrollX: (isDocument) ? window.scrollX : el.scrollLeft
     });
 }
 
-document.addEventListener('click', function (e) {
-    let clickCount = e.detail;
-    if (clickCount === 0) {
-        return;
-    }
-    broadcastMouseEvent('click', e);
-}, true);
+function initEventListeners() {
+    document.addEventListener('click', function (e) {
+        let clickCount = e.detail;
+        if (clickCount === 0) {
+            return;
+        }
+        broadcastMouseEvent('click', e);
+    }, true);
 
-document.addEventListener('focus', function (e) {
-        broadcastEvent('focus', e);
-    },
-    true
-);
-document.addEventListener('mousedown', function (e) {
-        broadcastMouseEvent('mousedown', e);
-    },
-    true
-);
-document.addEventListener('mouseup', function (e) {
-        broadcastMouseEvent('mouseup', e);
-    },
-    true
-);
-document.addEventListener('mousemove', function (e) {
-        broadcastMouseEvent('mousemove', e);
-    },
-    true
-);
-document.addEventListener('change', function (e) {
-        broadcastChangeEvent(e);
-    },
-    true
-);
-window.addEventListener('scroll', function (e) {
-        broadcastScrollEvent(e);
-    },
-    true
-);
+    document.addEventListener('focus', function (e) {
+            broadcastEvent('focus', e);
+        },
+        true
+    );
+    document.addEventListener('mousedown', function (e) {
+            broadcastMouseEvent('mousedown', e);
+        },
+        true
+    );
+    document.addEventListener('mouseup', function (e) {
+            broadcastMouseEvent('mouseup', e);
+        },
+        true
+    );
+    document.addEventListener('mousemove', function (e) {
+            broadcastMouseEvent('mousemove', e);
+        },
+        true
+    );
+    document.addEventListener('change', function (e) {
+            broadcastChangeEvent(e);
+        },
+        true
+    );
+    window.addEventListener('scroll', function (e) {
+            broadcastScrollEvent(e);
+        },
+        true
+    );
+}

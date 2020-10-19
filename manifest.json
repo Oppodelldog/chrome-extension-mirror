@@ -37,7 +37,8 @@
         "content/dom.js",
         "content/eventCapturing.js",
         "content/eventDispatching.js",
-        "content/ui.js"
+        "content/ui.js",
+        "content/init.js"
       ],
       "run_at": "document_end",
       "all_frames": true
