@@ -34,7 +34,7 @@ function getIndicatorCss() {
     right:0;
     width:40px;
     height:40px;
-    z-index:100;
+    z-index:22222;
     background-color:rgba(204, 204 ,204, 0.47);
     font-size: 30px;
     font-weight: bold;
