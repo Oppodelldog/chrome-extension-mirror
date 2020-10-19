@@ -1,6 +1,6 @@
 function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
-    withActiveTab((activeTab) => {
-        if (activeTab.id === sender.tab.id) {
+    withActiveTabId((activeTabId) => {
+        if (activeTabId === sender.tab.id) {
             broadcastEventToCoupledTabsContentScripts(request);
         }
     });
@@ -9,39 +9,37 @@ function receiveEventBroadcastFromContentScript(request, sender, sendResponse) {
 chrome.extension.onMessage.addListener(receiveEventBroadcastFromContentScript);
 
 function broadcastEventToCoupledTabsContentScripts(msg) {
-    withActiveTab((activeTab) => {
-        eachConnectedTab(activeTab, (connectedTab) => {
-            chrome.tabs.sendMessage(connectedTab.id, msg);
+    withActiveTabId((activeTabId) => {
+        eachConnectedTabId(activeTabId, (connectedTabId) => {
+            chrome.tabs.sendMessage(connectedTabId, msg);
         });
     });
 }
 
-function withActiveTab(f) {
+function withActiveTabId(f) {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
         const activeTab = tabs[0];
         if (activeTab) {
-            f(activeTab);
+            f(activeTab.id);
         }
     });
 }
 
-function eachConnectedTab(activeTab, f) {
-    if (!coupler.hasTabCoupledTabs(activeTab.id)) {
+function eachConnectedTabId(activeTabId, f) {
+    if (!coupler.hasTabCoupledTabs(activeTabId)) {
         return
     }
 
-    const coupledTabs = coupler.getCoupledTabs(activeTab.id)
+    const coupledTabs = coupler.getCoupledTabs(activeTabId)
 
-    for (let k in allTabs) {
-        if (!allTabs.hasOwnProperty(k)) {
+    for (let k in coupledTabs) {
+        if (!coupledTabs.hasOwnProperty(k)) {
             continue;
         }
 
-        const tab = allTabs[k];
-        if (tab.id !== activeTab.id) {
-            if (isTabsIdInArray(tab.id, coupledTabs)) {
-                f(tab)
-            }
+        const tabId = coupledTabs[k];
+        if (tabId !== activeTabId) {
+            f(tabId)
         }
     }
 }
