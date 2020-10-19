@@ -22,6 +22,7 @@
       "background/eventBroadcasting.js",
       "background/tabCoupling.js",
       "background/configuration.js",
+      "background/toggleExtensionEnabled.js",
       "background/init.js"
     ],
     "persistent": false
