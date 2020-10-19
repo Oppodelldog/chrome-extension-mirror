@@ -11,7 +11,7 @@ const generalConfigStub = '{"generalConfigStub":true}';
 const storageKeyCoupling = "coupling";
 const storageKeyGeneral = "general";
 
-describe("tabs", () => {
+describe("configuration", () => {
     beforeEach(() => {
         localStorage = {}
         localStorage[storageKeyCoupling] = couplingsStub;
