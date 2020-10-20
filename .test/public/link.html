@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Link</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a href="index.html">Index</a>
+<h1>Link</h1>
+
+<h2>simple link</h2>
+<p>
+    <a href="link-target.html?link=1">Link 1</a>
+</p>
+
+<h2>link opens new tab</h2>
+<p>
+    Special about links that open in new tabs is, that if they still match the mirror group<br/>
+    all events are synchronized to all tabs, regardless it makes sense or not.<br/>
+    One can test set here as follows<br/>
+</p>
+<ul>
+    <li>click the link below</li>
+    <li>new tabs will open the "Link Target" page</li>
+    <li>looks like this one, but is another page</li>
+    <li>in the new tab click the simple link</li>
+    <li>watch what happens to the original page</li>
+    <li>it also clicks the first link it finds in the dom</li>
+</ul>
+<p>This behavior shall not occur anymore, at least there may be a setting to prevent it.</p>
+
+<p>
+    <a href="link-target.html?link=2" target="_blank">Link 2 (new tab)</a>
+</p>
+
+
+</body>
+</html>
