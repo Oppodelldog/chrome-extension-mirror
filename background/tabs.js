@@ -3,11 +3,10 @@
     Having an array of all tabs is easy to work with in comparison to
     do a chrome async query and do work in its callback.
  */
-let allTabs = [];
+let allTabs = {};
 
 function addTab(tab) {
     allTabs[tab.id] = tab;
-
     sync();
 }
 
@@ -35,7 +34,18 @@ const listeners = {
     "onCreated": addTab,
 }
 
-function addEventListeners() {
+function initTabs() {
+    chrome.tabs.query({}, (tabs) => {
+        for (var k in tabs) {
+            if (!tabs.hasOwnProperty(k)) {
+                continue;
+            }
+            addTab(tabs[k]);
+        }
+    });
+}
+
+function addTabEventListeners() {
     for (let eventName in listeners) {
         if (!listeners.hasOwnProperty(eventName)) {
             continue
@@ -43,16 +53,5 @@ function addEventListeners() {
 
         const listener = listeners[eventName];
         chrome.tabs[eventName].addListener(listener);
-    }
-}
-
-function removeListeners() {
-    for (let eventName in listeners) {
-        if (!listeners.hasOwnProperty(eventName)) {
-            continue
-        }
-
-        const listener = listeners[eventName];
-        chrome.tabs[eventName].removeListener(listener)
     }
 }

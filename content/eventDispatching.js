@@ -22,8 +22,6 @@ function receiveEventBroadcastFromBackgroundScript(request) {
     }
 }
 
-chrome.runtime.onMessage.addListener(receiveEventBroadcastFromBackgroundScript);
-
 function dispatchNonDomElementEvent(request) {
     switch (request.event) {
         case 'scroll':
@@ -82,4 +80,8 @@ function dispatchMouseEvent(eventName, element, mouseEventInfo) {
 
 function dispatchScrollEvent(element, request) {
     element.scroll(request.scrollX, request.scrollY);
+}
+
+function initEventDispatching(){
+    chrome.runtime.onMessage.addListener(receiveEventBroadcastFromBackgroundScript);
 }

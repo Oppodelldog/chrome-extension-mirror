@@ -28,9 +28,10 @@ function initCoupleEvents() {
 }
 
 
-initContentScriptEventListener()
-initCoupling()
-initCoupleEvents()
+initContentScriptEventListener();
+initCoupling();
+initCoupleEvents();
+addTabEventListeners();
 
 let generalConfig = loadGeneralConfigAsObject();
 if (generalConfig.enabled) {

@@ -1,1 +1,2 @@
-initEventListeners()
+initEventListeners();
+initEventDispatching();

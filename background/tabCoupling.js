@@ -121,7 +121,6 @@ function sync() {
         }
 
         const coupling = couplings[k];
-
         coupler.coupleTabsWithGroup(coupling.group, findCoupledTabsForTabByUrlRegExList(allTabs, coupling.group.regExList))
     }
 }
