@@ -1,5 +1,7 @@
 # chrome-extension-mirror
 
+![url-patcher icon](icons/icon128.png)
+
 This extension supports working in multiple chrome tabs at once.  
 
 The intentional idea of this extension is to compare the behavior of two websites by performing actions just once.  
